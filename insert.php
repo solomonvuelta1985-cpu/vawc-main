@@ -1,12 +1,23 @@
 <?php
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['rater_id']) || !isset($_SESSION['is_authenticated']) || $_SESSION['is_authenticated'] !== true) {
+    header('Content-Type: application/json');
+    echo json_encode(['success' => false, 'message' => 'Unauthorized access. Please login.']);
+    exit;
+}
+
 require_once 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     send_json_response(false, 'Invalid request method');
 }
 
+// Use session rater_id (not from POST - security measure)
+$rater_id = $_SESSION['rater_id'];
+
 // Get and sanitize input
-$rater_id = sanitize_input($_POST['rater_id']);
 $barangay_id = sanitize_input($_POST['barangay_id']);
 $assessment_date = sanitize_input($_POST['assessment_date']);
 $section1_score = floatval($_POST['section1_score']);
@@ -17,7 +28,7 @@ $status = sanitize_input($_POST['status']);
 $remarks = sanitize_input($_POST['remarks']);
 
 // Validate required fields
-if (empty($rater_id) || empty($barangay_id) || empty($assessment_date)) {
+if (empty($barangay_id) || empty($assessment_date)) {
     send_json_response(false, 'Please fill in all required fields');
 }
 
@@ -40,7 +51,7 @@ $check_stmt->execute();
 $check_result = $check_stmt->get_result();
 
 if ($check_result->num_rows > 0) {
-    send_json_response(false, 'Assessment already exists for this rater and barangay. Please update the existing assessment instead.');
+    send_json_response(false, 'You have already created an assessment for this barangay. Please update the existing assessment instead.');
 }
 
 // Insert assessment

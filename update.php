@@ -1,4 +1,13 @@
 <?php
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['rater_id']) || !isset($_SESSION['is_authenticated']) || $_SESSION['is_authenticated'] !== true) {
+    header('Content-Type: application/json');
+    echo json_encode(['success' => false, 'message' => 'Unauthorized access. Please login.']);
+    exit;
+}
+
 require_once 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -31,31 +40,65 @@ if ($section1_score < 0 || $section1_score > 25 ||
 // Calculate total score
 $total_score = $section1_score + $section2_score + $section3_score + $section4_score;
 
-// Update assessment
-$sql = "UPDATE assessments SET
-    assessment_date = ?,
-    section1_score = ?,
-    section2_score = ?,
-    section3_score = ?,
-    section4_score = ?,
-    total_score = ?,
-    status = ?,
-    remarks = ?
-    WHERE id = ?";
+// Check if user is admin
+$is_admin = isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true;
 
-$stmt = $conn->prepare($sql);
-$stmt->bind_param(
-    "sdddddsi",
-    $assessment_date,
-    $section1_score,
-    $section2_score,
-    $section3_score,
-    $section4_score,
-    $total_score,
-    $status,
-    $remarks,
-    $id
-);
+if ($is_admin) {
+    // Admin can update any assessment
+    $sql = "UPDATE assessments SET
+        assessment_date = ?,
+        section1_score = ?,
+        section2_score = ?,
+        section3_score = ?,
+        section4_score = ?,
+        total_score = ?,
+        status = ?,
+        remarks = ?
+        WHERE id = ?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param(
+        "sdddddssi",
+        $assessment_date,
+        $section1_score,
+        $section2_score,
+        $section3_score,
+        $section4_score,
+        $total_score,
+        $status,
+        $remarks,
+        $id
+    );
+} else {
+    // Regular raters can only update their own assessments
+    $rater_id = $_SESSION['rater_id'];
+
+    $sql = "UPDATE assessments SET
+        assessment_date = ?,
+        section1_score = ?,
+        section2_score = ?,
+        section3_score = ?,
+        section4_score = ?,
+        total_score = ?,
+        status = ?,
+        remarks = ?
+        WHERE id = ? AND rater_id = ?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param(
+        "sdddddssii",
+        $assessment_date,
+        $section1_score,
+        $section2_score,
+        $section3_score,
+        $section4_score,
+        $total_score,
+        $status,
+        $remarks,
+        $id,
+        $rater_id
+    );
+}
 
 if ($stmt->execute()) {
     if ($stmt->affected_rows > 0) {
@@ -64,7 +107,7 @@ if ($stmt->execute()) {
             'total_score' => $total_score
         ]);
     } else {
-        send_json_response(false, 'No changes made or assessment not found');
+        send_json_response(false, 'No changes made, assessment not found, or access denied');
     }
 } else {
     send_json_response(false, 'Failed to update assessment: ' . $conn->error);

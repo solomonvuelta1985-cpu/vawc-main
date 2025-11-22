@@ -112,58 +112,6 @@ function renderOverview(data) {
                 </div>
             </div>
         </div>
-
-        <div class="col-lg-3 col-md-6 mb-3">
-            <div class="stat-card">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="stat-label">Completed</div>
-                        <div class="stat-value">${data.by_status.completed || 0}</div>
-                        <div class="stat-detail">Assessments</div>
-                    </div>
-                    <i class="bi bi-check2-circle stat-icon text-success"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 col-md-6 mb-3">
-            <div class="stat-card">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="stat-label">In Progress</div>
-                        <div class="stat-value">${data.by_status.in_progress || 0}</div>
-                        <div class="stat-detail">Assessments</div>
-                    </div>
-                    <i class="bi bi-hourglass-split stat-icon text-warning"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 col-md-6 mb-3">
-            <div class="stat-card">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="stat-label">Pending</div>
-                        <div class="stat-value">${data.by_status.pending || 0}</div>
-                        <div class="stat-detail">Assessments</div>
-                    </div>
-                    <i class="bi bi-exclamation-circle stat-icon text-danger"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 col-md-6 mb-3">
-            <div class="stat-card">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="stat-label">Average Score</div>
-                        <div class="stat-value">${parseFloat(data.scores.avg_total || 0).toFixed(1)}</div>
-                        <div class="stat-detail">out of 100</div>
-                    </div>
-                    <i class="bi bi-graph-up stat-icon text-primary"></i>
-                </div>
-            </div>
-        </div>
     `;
 
     document.getElementById('overview-stats').innerHTML = statsHtml;

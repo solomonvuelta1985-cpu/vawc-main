@@ -6,7 +6,7 @@ define('DB_PASS', '');
 define('DB_NAME', 'vaw_consolidator');
 
 // Application Configuration
-define('APP_NAME', 'VAW Data Consolidator');
+define('APP_NAME', 'VAW Functionality Audit System');
 define('APP_MUNICIPALITY', 'Baggao');
 define('APP_PROVINCE', 'Cagayan');
 define('COORDINATOR_NAME', 'Richmond Rosete');

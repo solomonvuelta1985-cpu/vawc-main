@@ -41,8 +41,8 @@ function getOverviewStats() {
 
     $stats = [];
 
-    // Total raters
-    $result = $conn->query("SELECT COUNT(*) as total FROM raters");
+    // Total raters (excluding system administrator)
+    $result = $conn->query("SELECT COUNT(*) as total FROM raters WHERE position != 'SYSTEM ADMINISTRATOR'");
     $stats['total_raters'] = $result->fetch_assoc()['total'];
 
     // Total barangays
@@ -135,6 +135,7 @@ function getRatersReport() {
             AVG(a.section4_score) as avg_section4
         FROM raters r
         LEFT JOIN assessments a ON r.id = a.rater_id
+        WHERE r.position != 'SYSTEM ADMINISTRATOR'
         GROUP BY r.id, r.name, r.email, r.contact_number, r.position
         ORDER BY r.name ASC
     ";
@@ -264,8 +265,8 @@ function getScoreDistribution() {
 function getCompletionMatrix() {
     global $conn;
 
-    // Get all raters
-    $raters_result = $conn->query("SELECT id, name FROM raters ORDER BY name");
+    // Get all raters (excluding system administrator)
+    $raters_result = $conn->query("SELECT id, name FROM raters WHERE position != 'SYSTEM ADMINISTRATOR' ORDER BY name");
     $raters = [];
     while ($row = $raters_result->fetch_assoc()) {
         $raters[] = $row;

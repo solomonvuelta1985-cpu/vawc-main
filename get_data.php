@@ -40,7 +40,7 @@ switch ($action) {
 function getRaters() {
     global $conn;
 
-    $sql = "SELECT id, name, email, contact_number FROM raters ORDER BY name ASC";
+    $sql = "SELECT id, name, email, contact_number FROM raters WHERE position != 'SYSTEM ADMINISTRATOR' ORDER BY name ASC";
     $result = $conn->query($sql);
 
     $raters = [];
@@ -76,24 +76,58 @@ function getBarangays() {
 function getAssessments() {
     global $conn;
 
-    $sql = "SELECT
-        a.id,
-        a.assessment_date,
-        a.section1_score,
-        a.section2_score,
-        a.section3_score,
-        a.section4_score,
-        a.total_score,
-        a.status,
-        a.remarks,
-        r.name as rater_name,
-        b.name as barangay_name
-    FROM assessments a
-    JOIN raters r ON a.rater_id = r.id
-    JOIN barangays b ON a.barangay_id = b.id
-    ORDER BY a.assessment_date DESC, a.id DESC";
+    // Check if user is admin - admins can see all assessments
+    $is_admin = isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true;
 
-    $result = $conn->query($sql);
+    if ($is_admin) {
+        // Admin sees all assessments
+        $sql = "SELECT
+            a.id,
+            a.barangay_id,
+            a.assessment_date,
+            a.section1_score,
+            a.section2_score,
+            a.section3_score,
+            a.section4_score,
+            a.total_score,
+            a.status,
+            a.remarks,
+            r.name as rater_name,
+            b.name as barangay_name
+        FROM assessments a
+        JOIN raters r ON a.rater_id = r.id
+        JOIN barangays b ON a.barangay_id = b.id
+        ORDER BY a.assessment_date DESC, a.id DESC";
+
+        $result = $conn->query($sql);
+    } else {
+        // Regular raters only see their own assessments
+        $rater_id = $_SESSION['rater_id'];
+
+        $sql = "SELECT
+            a.id,
+            a.barangay_id,
+            a.assessment_date,
+            a.section1_score,
+            a.section2_score,
+            a.section3_score,
+            a.section4_score,
+            a.total_score,
+            a.status,
+            a.remarks,
+            r.name as rater_name,
+            b.name as barangay_name
+        FROM assessments a
+        JOIN raters r ON a.rater_id = r.id
+        JOIN barangays b ON a.barangay_id = b.id
+        WHERE a.rater_id = ?
+        ORDER BY a.assessment_date DESC, a.id DESC";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $rater_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    }
 
     $assessments = [];
     if ($result->num_rows > 0) {
@@ -114,17 +148,39 @@ function getAssessment() {
         send_json_response(false, 'Invalid assessment ID');
     }
 
-    $sql = "SELECT
-        a.*,
-        r.name as rater_name,
-        b.name as barangay_name
-    FROM assessments a
-    JOIN raters r ON a.rater_id = r.id
-    JOIN barangays b ON a.barangay_id = b.id
-    WHERE a.id = ?";
+    // Check if user is admin
+    $is_admin = isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true;
 
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id);
+    if ($is_admin) {
+        // Admin can access any assessment
+        $sql = "SELECT
+            a.*,
+            r.name as rater_name,
+            b.name as barangay_name
+        FROM assessments a
+        JOIN raters r ON a.rater_id = r.id
+        JOIN barangays b ON a.barangay_id = b.id
+        WHERE a.id = ?";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $id);
+    } else {
+        // Regular raters can only access their own assessments
+        $rater_id = $_SESSION['rater_id'];
+
+        $sql = "SELECT
+            a.*,
+            r.name as rater_name,
+            b.name as barangay_name
+        FROM assessments a
+        JOIN raters r ON a.rater_id = r.id
+        JOIN barangays b ON a.barangay_id = b.id
+        WHERE a.id = ? AND a.rater_id = ?";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ii", $id, $rater_id);
+    }
+
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -132,7 +188,7 @@ function getAssessment() {
         $assessment = $result->fetch_assoc();
         send_json_response(true, 'Assessment retrieved successfully', $assessment);
     } else {
-        send_json_response(false, 'Assessment not found');
+        send_json_response(false, 'Assessment not found or access denied');
     }
 }
 
@@ -142,8 +198,8 @@ function getReports() {
     // Overall statistics
     $stats = [];
 
-    // Total raters
-    $sql = "SELECT COUNT(*) as total FROM raters";
+    // Total raters (excluding system administrator)
+    $sql = "SELECT COUNT(*) as total FROM raters WHERE position != 'SYSTEM ADMINISTRATOR'";
     $result = $conn->query($sql);
     $stats['total_raters'] = $result->fetch_assoc()['total'];
 
@@ -186,7 +242,7 @@ function getReports() {
         }
     }
 
-    // Stats by rater
+    // Stats by rater (excluding system administrator)
     $sql = "SELECT
         r.name as rater,
         COUNT(a.id) as total,
@@ -196,6 +252,7 @@ function getReports() {
         SUM(CASE WHEN a.status = 'pending' THEN 1 ELSE 0 END) as pending
     FROM raters r
     LEFT JOIN assessments a ON r.id = a.rater_id
+    WHERE r.position != 'SYSTEM ADMINISTRATOR'
     GROUP BY r.id, r.name
     ORDER BY total DESC";
 

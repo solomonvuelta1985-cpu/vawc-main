@@ -3,7 +3,7 @@ let currentStep = 0;
 const totalSteps = 5;
 
 // Tab Navigation
-function switchTab(tabName) {
+function switchTab(tabName, event) {
     // Hide all tabs
     document.querySelectorAll('.tab-content').forEach(tab => {
         tab.classList.remove('active');
@@ -18,7 +18,9 @@ function switchTab(tabName) {
     document.getElementById(tabName).classList.add('active');
 
     // Add active class to clicked nav tab
-    event.target.classList.add('active');
+    if (event && event.target) {
+        event.target.classList.add('active');
+    }
 
     // Load data for the tab
     if (tabName === 'viewTab') {
@@ -28,6 +30,15 @@ function switchTab(tabName) {
     } else if (tabName === 'addTab') {
         // Reset to step 0 when switching to Add Assessment tab
         goToStep(0);
+        // Set date to today
+        const dateInput = document.getElementById('assessment_date');
+        if (dateInput && !dateInput.value) {
+            dateInput.valueAsDate = new Date();
+        }
+        // Refresh assessment list to update disabled barangays
+        if (typeof fetchUserAssessments === 'function') {
+            fetchUserAssessments();
+        }
     }
 }
 
@@ -112,7 +123,7 @@ function updateSectionScore(section) {
 }
 
 // Select Radio Button
-function selectRadio(name, value, points) {
+function selectRadio(name, value) {
     // Check the radio button
     const radioId = name + '_' + value;
     document.getElementById(radioId).checked = true;
@@ -350,10 +361,16 @@ function submitAssessment() {
                     document.getElementById('section' + i + '_score').value = 0;
                     updateSectionScore(i);
                 }
+                // Set date to today automatically
+                document.getElementById('assessment_date').valueAsDate = new Date();
                 // Go back to step 0
                 goToStep(0);
-                // Reload assessments
+                // Reload assessments and refresh barangay dropdown
                 loadAssessments();
+                // Refresh the assessment list to update disabled barangays
+                if (typeof fetchUserAssessments === 'function') {
+                    fetchUserAssessments();
+                }
             });
         } else {
             Swal.fire({
@@ -752,13 +769,28 @@ function loadDropdowns() {
         if (data.success) {
             const select = document.getElementById('barangay_id');
             select.innerHTML = '<option value="">Select Barangay</option>';
+
+            // Sort barangays alphabetically
+            data.data.sort((a, b) => a.name.localeCompare(b.name));
+
+            // Add all barangays as simple options
             data.data.forEach(barangay => {
                 const option = document.createElement('option');
                 option.value = barangay.id;
                 option.textContent = barangay.name;
                 select.appendChild(option);
             });
+
+            console.log('Barangays loaded into dropdown, total:', data.data.length);
+
+            // Signal that barangays are loaded
+            if (typeof window.onBarangaysLoaded === 'function') {
+                window.onBarangaysLoaded();
+            }
         }
+    })
+    .catch(error => {
+        console.error('Error loading barangays:', error);
     });
 }
 

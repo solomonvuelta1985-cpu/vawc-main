@@ -7,3 +7,12 @@
 Stack trace:
 #0 C:\xampp\htdocs\vawc-main\insert.php(62): mysqli_stmt->bind_param('iisddddds', '1', '1', '2025-11-22', 25, 25, 25, 25, 100, 'completed', '')
 #1 {main}
+[22-Nov-2025 23:47:32 Asia/Manila] Successful login: WOMEN'S ORG from IP: 127.0.0.1
+[22-Nov-2025 23:47:57 Asia/Manila] Successful login: SB REPRESENTATIVE from IP: 127.0.0.1
+[22-Nov-2025 23:53:42 Asia/Manila] Successful login: ADMINISTRATOR from IP: 127.0.0.1
+[23-Nov-2025 00:07:40 Asia/Manila] Successful login: PNP BAGGAO from IP: 127.0.0.1
+[23-Nov-2025 06:12:45 Asia/Manila] Successful login: PNP BAGGAO from IP: 127.0.0.1
+[23-Nov-2025 06:25:40 Asia/Manila] Successful login: PNP BAGGAO from IP: 127.0.0.1
+[23-Nov-2025 06:38:00 Asia/Manila] Successful login: PNP BAGGAO from IP: 127.0.0.1
+[23-Nov-2025 06:39:40 Asia/Manila] Successful login: PNP BAGGAO from IP: 127.0.0.1
+[23-Nov-2025 06:44:03 Asia/Manila] Successful login: ADMINISTRATOR from IP: 127.0.0.1

@@ -31,20 +31,21 @@ require_once 'config.php';
     <style>
         /* Navbar Styles */
         .custom-navbar {
-            background-color: #fff;
-            border-bottom: 1px solid #dee2e6;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c4f7c 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             padding: 0.75rem 1.5rem;
         }
 
         .navbar-brand {
             font-weight: 700;
-            color: #1a73e8 !important;
+            color: #ffffff !important;
             font-size: clamp(1rem, 2.5vw, 1.25rem);
         }
 
         .navbar-brand i {
             font-size: clamp(1.25rem, 3vw, 1.5rem);
+            color: #ffffff;
         }
 
         .avatar-circle {
@@ -119,6 +120,148 @@ require_once 'config.php';
         .custom-navbar.fixed-top {
             z-index: 1030;
         }
+
+        /* Network Speed Toast Notification */
+        .network-toast {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            padding: clamp(0.875rem, 2vw, 1rem) clamp(1rem, 2.5vw, 1.25rem);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1040;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            max-width: 400px;
+            animation: slideIn 0.3s ease-out;
+            font-size: clamp(0.875rem, 2vw, 0.9375rem);
+        }
+
+        .network-toast.fade-out {
+            animation: fadeOut 0.3s ease-out forwards;
+        }
+
+        .network-toast .toast-icon {
+            font-size: clamp(1.25rem, 3vw, 1.5rem);
+            flex-shrink: 0;
+        }
+
+        .network-toast .toast-content {
+            flex: 1;
+        }
+
+        .network-toast .toast-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .network-toast .toast-message {
+            font-size: clamp(0.75rem, 1.8vw, 0.8125rem);
+            opacity: 0.95;
+        }
+
+        .network-toast .toast-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .network-toast .toast-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .network-toast {
+                right: 10px;
+                left: 10px;
+                min-width: auto;
+            }
+        }
+
+        /* Fix tab switching layout shift */
+        .tab-content {
+            min-height: 400px;
+        }
+
+        /* Barangay dropdown styling */
+        select#barangay_id {
+            line-height: 1.8 !important;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Barangay options styling */
+        select#barangay_id option {
+            padding: clamp(8px, 2vw, 10px) clamp(12px, 3vw, 16px) !important;
+            font-size: clamp(13px, 3vw, 15px) !important;
+            color: #202124 !important;
+            background: white !important;
+        }
+
+        /* Disabled/Already rated barangays */
+        select#barangay_id option:disabled {
+            color: #999 !important;
+            font-style: italic !important;
+            background: #f5f5f5 !important;
+            text-decoration: line-through;
+        }
+
+        /* Step 0 form - Keep 3 columns side-by-side */
+        #step0 .form-row {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr 1fr !important;
+            gap: clamp(12px, 3vw, 20px) !important;
+            margin-bottom: clamp(16px, 4vw, 20px);
+        }
+
+        /* Responsive: Stack on very small screens only */
+        @media (max-width: 768px) {
+            #step0 .form-row {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        /* Medium screens: 2 columns then 1 */
+        @media (min-width: 769px) and (max-width: 991px) {
+            #step0 .form-row {
+                grid-template-columns: 1fr 1fr !important;
+            }
+
+            #step0 .form-row .form-group:last-child {
+                grid-column: 1 / -1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -170,8 +313,8 @@ require_once 'config.php';
         <div class="content">
             <!-- Navigation Tabs -->
             <div class="nav-tabs">
-                <button class="nav-tab active" onclick="switchTab('addTab')"><i class="bi bi-plus-circle me-1"></i> Add Assessment</button>
-                <button class="nav-tab" onclick="switchTab('viewTab')"><i class="bi bi-list-ul me-1"></i> View Assessments</button>
+                <button class="nav-tab active" onclick="switchTab('addTab', event)"><i class="bi bi-plus-circle me-1"></i> Add Assessment</button>
+                <button class="nav-tab" onclick="switchTab('viewTab', event)"><i class="bi bi-list-ul me-1"></i> View Assessments</button>
             </div>
 
             <!-- Add Assessment Tab -->
@@ -235,22 +378,22 @@ require_once 'config.php';
                         <div class="form-group">
                             <label>1.a. The Barangay VAW Desk is established through: (5%)</label>
                             <div class="radio-group">
-                                <div class="radio-option" onclick="selectRadio('q1a', 'ordinance', 5)">
+                                <div class="radio-option" onclick="selectRadio('q1a', 'ordinance')">
                                     <input type="radio" name="q1a" value="ordinance" id="q1a_ordinance" onchange="calculateScores()">
                                     <label for="q1a_ordinance">Barangay Ordinance</label>
                                     <span class="point-badge">5%</span>
                                 </div>
-                                <div class="radio-option" onclick="selectRadio('q1a', 'eo', 5)">
+                                <div class="radio-option" onclick="selectRadio('q1a', 'eo')">
                                     <input type="radio" name="q1a" value="eo" id="q1a_eo" onchange="calculateScores()">
                                     <label for="q1a_eo">Executive Order</label>
                                     <span class="point-badge">5%</span>
                                 </div>
-                                <div class="radio-option" onclick="selectRadio('q1a', 'both', 5)">
+                                <div class="radio-option" onclick="selectRadio('q1a', 'both')">
                                     <input type="radio" name="q1a" value="both" id="q1a_both" onchange="calculateScores()">
                                     <label for="q1a_both">Both Ordinance & EO</label>
                                     <span class="point-badge">5%</span>
                                 </div>
-                                <div class="radio-option" onclick="selectRadio('q1a', 'none', 0)">
+                                <div class="radio-option" onclick="selectRadio('q1a', 'none')">
                                     <input type="radio" name="q1a" value="none" id="q1a_none" onchange="calculateScores()">
                                     <label for="q1a_none">None</label>
                                     <span class="point-badge">0%</span>
@@ -549,27 +692,27 @@ require_once 'config.php';
                         <div class="form-group">
                             <label>4.b. Quarterly Accomplishment Reports: (10%)</label>
                             <div class="radio-group">
-                                <div class="radio-option" onclick="selectRadio('q4b', '4', 10)">
+                                <div class="radio-option" onclick="selectRadio('q4b', '4')">
                                     <input type="radio" name="q4b" value="4" id="q4b_4" onchange="calculateScores()">
                                     <label for="q4b_4">4 quarterly accomplishment reports submitted (with received stamp)</label>
                                     <span class="point-badge">10%</span>
                                 </div>
-                                <div class="radio-option" onclick="selectRadio('q4b', '3', 7.5)">
+                                <div class="radio-option" onclick="selectRadio('q4b', '3')">
                                     <input type="radio" name="q4b" value="3" id="q4b_3" onchange="calculateScores()">
                                     <label for="q4b_3">3 quarterly accomplishment reports</label>
                                     <span class="point-badge">7.5%</span>
                                 </div>
-                                <div class="radio-option" onclick="selectRadio('q4b', '2', 5)">
+                                <div class="radio-option" onclick="selectRadio('q4b', '2')">
                                     <input type="radio" name="q4b" value="2" id="q4b_2" onchange="calculateScores()">
                                     <label for="q4b_2">2 quarterly accomplishment reports</label>
                                     <span class="point-badge">5%</span>
                                 </div>
-                                <div class="radio-option" onclick="selectRadio('q4b', '1', 2.5)">
+                                <div class="radio-option" onclick="selectRadio('q4b', '1')">
                                     <input type="radio" name="q4b" value="1" id="q4b_1" onchange="calculateScores()">
                                     <label for="q4b_1">1 quarterly accomplishment report</label>
                                     <span class="point-badge">2.5%</span>
                                 </div>
-                                <div class="radio-option" onclick="selectRadio('q4b', '0', 0)">
+                                <div class="radio-option" onclick="selectRadio('q4b', '0')">
                                     <input type="radio" name="q4b" value="0" id="q4b_0" onchange="calculateScores()">
                                     <label for="q4b_0">None</label>
                                     <span class="point-badge">0%</span>
@@ -591,17 +734,17 @@ require_once 'config.php';
                         <div class="form-group">
                             <label>4.d. State of Barangay Address (SOBA) Inclusion: (10%)</label>
                             <div class="radio-group">
-                                <div class="radio-option" onclick="selectRadio('q4d', '2', 10)">
+                                <div class="radio-option" onclick="selectRadio('q4d', '2')">
                                     <input type="radio" name="q4d" value="2" id="q4d_2" onchange="calculateScores()">
                                     <label for="q4d_2">Accomplishments of VAW Desk included in two (2) SOBA</label>
                                     <span class="point-badge">10%</span>
                                 </div>
-                                <div class="radio-option" onclick="selectRadio('q4d', '1', 5)">
+                                <div class="radio-option" onclick="selectRadio('q4d', '1')">
                                     <input type="radio" name="q4d" value="1" id="q4d_1" onchange="calculateScores()">
                                     <label for="q4d_1">Accomplishments of VAW Desk included in one (1) SOBA</label>
                                     <span class="point-badge">5%</span>
                                 </div>
-                                <div class="radio-option" onclick="selectRadio('q4d', '0', 0)">
+                                <div class="radio-option" onclick="selectRadio('q4d', '0')">
                                     <input type="radio" name="q4d" value="0" id="q4d_0" onchange="calculateScores()">
                                     <label for="q4d_0">Accomplishments of VAW Desk not included in SOBA</label>
                                     <span class="point-badge">0%</span>
@@ -748,6 +891,216 @@ require_once 'config.php';
                     window.location.href = 'logout.php';
                 }
             });
+        }
+
+        // Network Speed Monitoring
+        let networkToastElement = null;
+        let lastSpeedCheck = 0;
+
+        function showNetworkToast(speed) {
+            // Remove existing toast if any
+            if (networkToastElement) {
+                networkToastElement.remove();
+            }
+
+            // Create toast
+            const toast = document.createElement('div');
+            toast.className = 'network-toast';
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <i class="bi bi-wifi-off"></i>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">Slow Connection Detected</div>
+                    <div class="toast-message">Your connection speed is ${speed} kbps. Consider switching to a stronger network.</div>
+                </div>
+                <button class="toast-close" onclick="closeNetworkToast()">
+                    <i class="bi bi-x"></i>
+                </button>
+            `;
+
+            document.body.appendChild(toast);
+            networkToastElement = toast;
+
+            // Auto-fade after 3 seconds
+            setTimeout(() => {
+                closeNetworkToast();
+            }, 3000);
+        }
+
+        function closeNetworkToast() {
+            if (networkToastElement) {
+                networkToastElement.classList.add('fade-out');
+                setTimeout(() => {
+                    if (networkToastElement) {
+                        networkToastElement.remove();
+                        networkToastElement = null;
+                    }
+                }, 300);
+            }
+        }
+
+        async function checkNetworkSpeed() {
+            try {
+                // Use Navigator.connection API if available
+                if ('connection' in navigator) {
+                    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                    if (connection && connection.downlink !== undefined) {
+                        // downlink is in Mbps, convert to kbps
+                        const speedKbps = Math.round(connection.downlink * 1000);
+
+                        if (speedKbps < 700) {
+                            showNetworkToast(speedKbps);
+                        }
+                        return;
+                    }
+                }
+
+                // Fallback: Measure actual download speed
+                const imageAddr = "https://www.google.com/images/phd/px.gif";
+                const startTime = new Date().getTime();
+                const cacheBuster = "?nnn=" + startTime;
+
+                const download = new Image();
+                download.onload = function() {
+                    const endTime = new Date().getTime();
+                    const duration = (endTime - startTime) / 1000; // in seconds
+                    const bitsLoaded = 43 * 8; // 43 bytes = px.gif size
+                    const speedBps = (bitsLoaded / duration).toFixed(2);
+                    const speedKbps = Math.round(speedBps / 1024);
+
+                    if (speedKbps < 700) {
+                        showNetworkToast(speedKbps);
+                    }
+                };
+
+                download.onerror = function() {
+                    // If test fails, show warning
+                    showNetworkToast('unknown');
+                };
+
+                download.src = imageAddr + cacheBuster;
+            } catch (error) {
+                console.log('Network speed check failed:', error);
+            }
+        }
+
+        // Check network speed every 4 minutes (240000 ms)
+        function startNetworkMonitoring() {
+            // Initial check after 5 seconds
+            setTimeout(checkNetworkSpeed, 5000);
+
+            // Then check every 4 minutes
+            setInterval(checkNetworkSpeed, 240000);
+        }
+
+        // Fetch user's existing assessments to disable already-rated barangays
+        let userAssessments = [];
+        let assessmentsLoaded = false;
+        let barangaysLoaded = false;
+
+        async function fetchUserAssessments() {
+            try {
+                const response = await fetch('get_data.php?action=assessments');
+                const data = await response.json();
+
+                console.log('Assessment fetch response:', data);
+
+                if (data.success && data.data) {
+                    userAssessments = data.data;
+                    assessmentsLoaded = true;
+                    console.log('✓ Assessments loaded:', userAssessments.length);
+                    console.log('Assessment data:', userAssessments);
+                    tryUpdateBarangayDropdown();
+                } else {
+                    console.warn('No assessments found or error:', data.message);
+                    assessmentsLoaded = true; // Still mark as loaded even if empty
+                    tryUpdateBarangayDropdown();
+                }
+            } catch (error) {
+                console.error('Error fetching assessments:', error);
+                assessmentsLoaded = true; // Mark as loaded to prevent indefinite waiting
+                tryUpdateBarangayDropdown();
+            }
+        }
+
+        function tryUpdateBarangayDropdown() {
+            // Only update when both barangays and assessments are loaded
+            if (barangaysLoaded && assessmentsLoaded) {
+                console.log('✓ Both loaded - updating dropdown now');
+                updateBarangayDropdown();
+            } else {
+                console.log('⏳ Waiting... Barangays:', barangaysLoaded, 'Assessments:', assessmentsLoaded);
+            }
+        }
+
+        function updateBarangayDropdown() {
+            const barangaySelect = document.getElementById('barangay_id');
+            if (!barangaySelect) {
+                console.error('❌ Barangay select element not found');
+                return;
+            }
+
+            // Get all options (including those in optgroups)
+            const allOptions = barangaySelect.querySelectorAll('option');
+            console.log('Total options found:', allOptions.length);
+
+            if (allOptions.length <= 1) { // Only the placeholder "Select Barangay"
+                console.warn('⚠ No barangay options loaded yet');
+                // Retry after a short delay
+                setTimeout(updateBarangayDropdown, 500);
+                return;
+            }
+
+            // Get list of already-rated barangay IDs
+            const ratedBarangayIds = userAssessments.map(assessment => {
+                const id = String(assessment.barangay_id);
+                console.log(`Mapping assessment ${assessment.id}: Barangay "${assessment.barangay_name}" (ID: ${id})`);
+                return id;
+            });
+            console.log('📋 Already rated barangay IDs:', ratedBarangayIds);
+
+            // Disable already-rated barangays
+            let disabledCount = 0;
+            allOptions.forEach(option => {
+                const optionValue = String(option.value);
+                if (option.value && ratedBarangayIds.includes(optionValue)) {
+                    option.disabled = true;
+                    const originalText = option.textContent.trim();
+                    if (!originalText.includes('(Already Rated)')) {
+                        option.textContent = originalText + ' (Already Rated)';
+                    }
+                    option.style.color = '#999 !important';
+                    option.style.fontStyle = 'italic';
+                    option.style.textDecoration = 'line-through';
+                    console.log(`🔒 Disabled: ${originalText} (value: ${optionValue})`);
+                    disabledCount++;
+                }
+            });
+
+            console.log(`✓ Successfully disabled ${disabledCount} barangay(s)`);
+
+            if (disabledCount === 0 && ratedBarangayIds.length > 0) {
+                console.warn('⚠ Warning: You have rated barangays but none were disabled. Check if barangay IDs match.');
+            }
+        }
+
+        // Signal that barangays are loaded (called from script.js)
+        window.onBarangaysLoaded = function() {
+            barangaysLoaded = true;
+            console.log('✓ Barangays loaded signal received');
+            tryUpdateBarangayDropdown();
+        };
+
+        // Start monitoring when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                startNetworkMonitoring();
+                fetchUserAssessments();
+            });
+        } else {
+            startNetworkMonitoring();
+            fetchUserAssessments();
         }
     </script>
 </body>

@@ -15,7 +15,7 @@ $admin_username = 'Admin';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - VAW Data Consolidator</title>
+    <title>Admin Dashboard - VAW Functionality Audit System </title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -42,29 +42,102 @@ $admin_username = 'Admin';
             background-color: #f8f9fa;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             font-size: clamp(0.875rem, 1.5vw, 1rem);
+            padding-top: 60px;
         }
 
-        .navbar {
-            background-color: #fff;
-            border-bottom: 1px solid #dee2e6;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-            padding: clamp(0.75rem, 2vw, 1.25rem) clamp(1rem, 3vw, 1.5rem);
+        /* Custom Navbar Styles */
+        .custom-navbar {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c4f7c 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            padding: 0.75rem 1.5rem;
+        }
+
+        .custom-navbar.fixed-top {
+            z-index: 1030;
         }
 
         .navbar-brand {
             font-weight: 700;
-            color: #212529;
+            color: #ffffff !important;
             font-size: clamp(1rem, 2.5vw, 1.25rem);
         }
 
         .navbar-brand i {
             font-size: clamp(1.25rem, 3vw, 1.5rem);
+            color: #ffffff;
         }
 
         .badge-admin {
-            background-color: #0d6efd;
+            background-color: #ffc107;
+            color: #000;
             font-size: clamp(0.65rem, 1.5vw, 0.75rem);
             padding: clamp(0.25rem, 0.5vw, 0.35rem) clamp(0.5rem, 1vw, 0.65rem);
+            font-weight: 600;
+        }
+
+        .avatar-circle {
+            width: clamp(35px, 8vw, 40px);
+            height: clamp(35px, 8vw, 40px);
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .avatar-circle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+        }
+
+        .dropdown-toggle::after {
+            display: none;
+        }
+
+        .dropdown-menu {
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 1px solid #dee2e6;
+            padding: 0.5rem;
+        }
+
+        .dropdown-item {
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            font-size: clamp(0.875rem, 2vw, 0.9375rem);
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown-divider {
+            margin: 0.5rem 0;
+        }
+
+        .user-info-dropdown {
+            padding: 0.75rem 1rem;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-info-dropdown .user-name {
+            font-weight: 600;
+            color: #212529;
+            font-size: clamp(0.875rem, 2vw, 0.9375rem);
+            margin-bottom: 0.25rem;
+        }
+
+        .user-info-dropdown .user-role {
+            font-size: clamp(0.75rem, 1.8vw, 0.8125rem);
+            color: #6c757d;
         }
 
         .main-content {
@@ -334,18 +407,75 @@ $admin_username = 'Admin';
 
         /* Touch-friendly spacing on mobile */
         @media (max-width: 576px) {
+            body {
+                padding-top: 80px !important; /* Increased padding for mobile navbar */
+            }
+
+            .custom-navbar {
+                padding: 0.75rem 1rem; /* Reduced horizontal padding on mobile */
+            }
+
+            .navbar-brand {
+                font-size: 0.9rem;
+            }
+
+            .badge-admin {
+                font-size: 0.6rem;
+                padding: 0.2rem 0.4rem;
+            }
+
+            .main-content {
+                padding-top: 1rem !important; /* Add extra spacing between navbar and tabs */
+            }
+
             .nav-tabs {
                 overflow-x: auto;
                 overflow-y: hidden;
                 -webkit-overflow-scrolling: touch;
                 white-space: nowrap;
                 flex-wrap: nowrap;
+                margin-bottom: 1rem;
+            }
+
+            .nav-tabs .nav-link {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.75rem;
             }
 
             .table thead th {
                 position: sticky;
                 top: 0;
                 z-index: 2;
+            }
+
+            /* Ensure dropdown is accessible on mobile */
+            .dropdown-menu {
+                position: absolute !important;
+                right: 0 !important;
+                left: auto !important;
+                margin-top: 0.5rem;
+                min-width: 200px;
+            }
+
+            .avatar-circle {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Extra small devices (phones in portrait) */
+        @media (max-width: 400px) {
+            body {
+                padding-top: 90px !important; /* Even more padding for very small screens */
+            }
+
+            .navbar-brand i {
+                display: none; /* Hide icon to save space */
+            }
+
+            .navbar-brand {
+                font-size: 0.85rem;
             }
         }
 
@@ -360,22 +490,38 @@ $admin_username = 'Admin';
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light">
+    <!-- Top Navbar -->
+    <nav class="navbar custom-navbar fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <i class="bi bi-shield-lock-fill text-primary me-2"></i>
+                <i class="bi bi-shield-lock-fill me-2"></i>
                 VAW Data Consolidator
                 <span class="badge badge-admin ms-2">ADMIN</span>
             </a>
             <div class="d-flex align-items-center">
-                <div class="me-3 text-end d-none d-md-block">
-                    <div class="fw-semibold"><?php echo htmlspecialchars($admin_name); ?></div>
-                    <small class="text-muted">Administrator</small>
+                <div class="dropdown">
+                    <button class="btn p-0 dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="avatar-circle" title="<?php echo htmlspecialchars($admin_name); ?>">
+                            <?php
+                                echo strtoupper(substr($admin_name, 0, 1));
+                            ?>
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li>
+                            <div class="user-info-dropdown">
+                                <div class="user-name"><?php echo htmlspecialchars($admin_name); ?></div>
+                                <div class="user-role">Administrator</div>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="#" onclick="logout(); return false;">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-                <button class="btn btn-outline-danger btn-sm" onclick="logout()">
-                    <i class="bi bi-box-arrow-right me-1"></i> Logout
-                </button>
             </div>
         </div>
     </nav>

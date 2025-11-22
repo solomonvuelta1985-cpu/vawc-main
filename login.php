@@ -180,10 +180,10 @@ header("Content-Security-Policy: default-src 'self' https://cdn.jsdelivr.net; sc
         .login-container {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border-radius: clamp(16px, 3vw, 24px);
+            border-radius: clamp(12px, 2.5vw, 20px);
             box-shadow: 0 20px 60px rgba(107, 70, 193, 0.15);
-            padding: clamp(1.75rem, 4.5vw, 2.25rem) clamp(2rem, 5vw, 2.5rem);
-            max-width: 480px;
+            padding: clamp(1.25rem, 3vw, 1.75rem) clamp(1.5rem, 4vw, 2rem);
+            max-width: 440px;
             width: 90%;
             opacity: 0;
             animation: fadeInLogin 0.8s ease 3s forwards;
@@ -205,13 +205,13 @@ header("Content-Security-Policy: default-src 'self' https://cdn.jsdelivr.net; sc
 
         .login-header {
             text-align: center;
-            margin-bottom: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: clamp(1rem, 3vw, 1.5rem);
         }
 
         .logo-container {
-            width: clamp(80px, 18vw, 100px);
-            height: clamp(80px, 18vw, 100px);
-            margin: 0 auto clamp(1rem, 3vw, 1.25rem);
+            width: clamp(70px, 15vw, 90px);
+            height: clamp(70px, 15vw, 90px);
+            margin: 0 auto clamp(0.75rem, 2.5vw, 1rem);
             border-radius: 50%;
             overflow: hidden;
             box-shadow: 0 4px 16px rgba(107, 70, 193, 0.2);
@@ -247,12 +247,12 @@ header("Content-Security-Policy: default-src 'self' https://cdn.jsdelivr.net; sc
             border-radius: 20px;
             font-size: clamp(0.688rem, 1.5vw, 0.75rem);
             font-weight: 600;
-            margin-bottom: clamp(1rem, 2.5vw, 1.5rem);
+            margin-bottom: clamp(0.75rem, 2vw, 1rem);
             box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
         }
 
         .form-group {
-            margin-bottom: clamp(1.25rem, 3vw, 1.5rem);
+            margin-bottom: clamp(1rem, 2.5vw, 1.25rem);
         }
 
         .form-group label {
@@ -266,9 +266,9 @@ header("Content-Security-Policy: default-src 'self' https://cdn.jsdelivr.net; sc
 
         .pin-boxes {
             display: flex;
-            gap: clamp(8px, 2vw, 12px);
+            gap: clamp(8px, 2vw, 10px);
             justify-content: center;
-            margin-bottom: clamp(1rem, 2.5vw, 1.25rem);
+            margin-bottom: clamp(0.75rem, 2vw, 1rem);
         }
 
         .pin-box {
@@ -352,22 +352,22 @@ header("Content-Security-Policy: default-src 'self' https://cdn.jsdelivr.net; sc
 
         .footer-text {
             text-align: center;
-            margin-top: clamp(1.25rem, 3vw, 1.5rem);
+            margin-top: clamp(1rem, 2.5vw, 1.25rem);
             font-size: clamp(0.75rem, 1.8vw, 0.813rem);
             color: #718096;
-            line-height: 1.6;
+            line-height: 1.5;
         }
 
         .footer-text strong {
             color: #4A5568;
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .developer-badge {
             text-align: center;
-            margin-top: clamp(1rem, 2.5vw, 1.25rem);
-            padding-top: clamp(1rem, 2.5vw, 1.25rem);
+            margin-top: clamp(0.75rem, 2vw, 1rem);
+            padding-top: clamp(0.75rem, 2vw, 1rem);
             border-top: 1px solid #E2E8F0;
         }
 
@@ -397,6 +397,81 @@ header("Content-Security-Policy: default-src 'self' https://cdn.jsdelivr.net; sc
 
         .loading-pulse {
             animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        /* Laptop screens - prevent overlapping */
+        @media (min-height: 600px) and (max-height: 800px) {
+            .login-container {
+                padding: 1.25rem 1.75rem;
+                max-width: 400px;
+            }
+
+            .logo-container {
+                width: 70px;
+                height: 70px;
+                margin-bottom: 0.75rem;
+            }
+
+            .login-header {
+                margin-bottom: 0.875rem;
+            }
+
+            .security-badge {
+                margin-bottom: 0.75rem;
+            }
+
+            .form-group {
+                margin-bottom: 0.875rem;
+            }
+
+            .footer-text {
+                margin-top: 0.875rem;
+            }
+
+            .developer-badge {
+                margin-top: 0.625rem;
+                padding-top: 0.625rem;
+            }
+        }
+
+        /* Very short screens (like some smaller laptops) */
+        @media (max-height: 700px) {
+            .login-container {
+                padding: 1rem 1.5rem;
+                max-width: 380px;
+            }
+
+            .logo-container {
+                width: 60px;
+                height: 60px;
+                margin-bottom: 0.5rem;
+            }
+
+            .login-header h1 {
+                font-size: 1.25rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .login-header p {
+                font-size: 0.813rem;
+            }
+
+            .security-badge {
+                padding: 0.375rem 0.875rem;
+                font-size: 0.688rem;
+                margin-bottom: 0.625rem;
+            }
+
+            .pin-box {
+                width: 48px;
+                height: 48px;
+                font-size: 22px;
+            }
+
+            .login-btn {
+                padding: 0.75rem;
+                font-size: 0.938rem;
+            }
         }
 
         @media (max-width: 600px) {
