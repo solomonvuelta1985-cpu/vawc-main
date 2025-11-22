@@ -1,0 +1,617 @@
+<?php
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['rater_id']) || !isset($_SESSION['is_authenticated']) || $_SESSION['is_authenticated'] !== true) {
+    header('Location: login.php');
+    exit;
+}
+
+require_once 'config.php';
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo APP_NAME; ?> - <?php echo APP_MUNICIPALITY; ?></title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><?php echo APP_NAME; ?></h1>
+            <p>Municipality of <?php echo APP_MUNICIPALITY; ?>, <?php echo APP_PROVINCE; ?></p>
+            <p>Logged in as: <strong><?php echo htmlspecialchars($_SESSION['rater_name']); ?></strong></p>
+            <a href="logout.php" class="logout-btn" onclick="return confirm('Are you sure you want to logout?');">Logout</a>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+        <div class="progress-text-container">
+            <span class="progress-badge" id="progressText">Step 0 of 5</span>
+        </div>
+
+        <div class="content">
+            <!-- Navigation Tabs -->
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="switchTab('addTab')">Add Assessment</button>
+                <button class="nav-tab" onclick="switchTab('viewTab')">View Assessments</button>
+                <button class="nav-tab" onclick="switchTab('reportsTab')">Reports</button>
+            </div>
+
+            <!-- Add Assessment Tab -->
+            <div id="addTab" class="tab-content active">
+                <!-- Step 0: Initial Information -->
+                <div class="step active" id="step0">
+                    <div class="card">
+                        <h2 class="card-title">Assessment Information</h2>
+
+                        <div class="alert alert-info">
+                            <strong>📋 Instructions:</strong><br>
+                            Fill in the basic information to start the assessment. All data will be saved as you progress through each section.
+                        </div>
+
+                        <form id="assessmentForm">
+                            <!-- Hidden input for rater_id from session -->
+                            <input type="hidden" id="rater_id" name="rater_id" value="<?php echo $_SESSION['rater_id']; ?>">
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Rater/Assessor</label>
+                                    <div class="readonly-field">
+                                        <?php echo htmlspecialchars($_SESSION['rater_name']); ?>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="barangay_id">Barangay *</label>
+                                    <select id="barangay_id" name="barangay_id" required onchange="validateStep0()">
+                                        <option value="">Select Barangay</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="assessment_date">Assessment Date *</label>
+                                    <input type="date" id="assessment_date" name="assessment_date" required onchange="validateStep0()">
+                                </div>
+                            </div>
+
+                            <div class="button-group">
+                                <button type="button" class="btn btn-primary" onclick="nextStep()" id="step0Next" disabled>Next →</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Step 1: Section 1 - Establishment -->
+                <div class="step" id="step1">
+                    <div class="card">
+                        <h2 class="card-title">Section 1: Establishment</h2>
+
+                        <div class="barangay-info">
+                            <strong>Barangay:</strong> <span id="barangay_name_1"></span><br>
+                            <strong>Date:</strong> <span id="assessment_date_1"></span><br>
+                            <strong>Score:</strong> <span id="score1_display" style="font-size: 20px; color: #1e8e3e;">0/25</span>
+                        </div>
+
+                        <!-- Hidden input to store calculated score -->
+                        <input type="hidden" id="section1_score" name="section1_score" value="0">
+
+                        <div class="form-group">
+                            <label>1.a. The Barangay VAW Desk is established through: (5%)</label>
+                            <div class="radio-group">
+                                <div class="radio-option" onclick="selectRadio('q1a', 'ordinance', 5)">
+                                    <input type="radio" name="q1a" value="ordinance" id="q1a_ordinance" onchange="calculateScores()">
+                                    <label for="q1a_ordinance">Barangay Ordinance</label>
+                                    <span class="point-badge">5%</span>
+                                </div>
+                                <div class="radio-option" onclick="selectRadio('q1a', 'eo', 5)">
+                                    <input type="radio" name="q1a" value="eo" id="q1a_eo" onchange="calculateScores()">
+                                    <label for="q1a_eo">Executive Order</label>
+                                    <span class="point-badge">5%</span>
+                                </div>
+                                <div class="radio-option" onclick="selectRadio('q1a', 'both', 5)">
+                                    <input type="radio" name="q1a" value="both" id="q1a_both" onchange="calculateScores()">
+                                    <label for="q1a_both">Both Ordinance & EO</label>
+                                    <span class="point-badge">5%</span>
+                                </div>
+                                <div class="radio-option" onclick="selectRadio('q1a', 'none', 0)">
+                                    <input type="radio" name="q1a" value="none" id="q1a_none" onchange="calculateScores()">
+                                    <label for="q1a_none">None</label>
+                                    <span class="point-badge">0%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>1.b. Barangay VAW Desk Person has attended: (5% total)</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-option" onclick="toggleCheckbox('q1b_antivaw')">
+                                    <input type="checkbox" id="q1b_antivaw" onchange="calculateScores()">
+                                    <label for="q1b_antivaw">Orientation on Anti-VAW Laws (RA 9262, 9208, etc.)</label>
+                                    <span class="point-badge">2%</span>
+                                </div>
+                                <div class="checkbox-option" onclick="toggleCheckbox('q1b_gender')">
+                                    <input type="checkbox" id="q1b_gender" onchange="calculateScores()">
+                                    <label for="q1b_gender">Gender-Sensitivity Training</label>
+                                    <span class="point-badge">2%</span>
+                                </div>
+                                <div class="checkbox-option" onclick="toggleCheckbox('q1b_crisis')">
+                                    <input type="checkbox" id="q1b_crisis" onchange="calculateScores()">
+                                    <label for="q1b_crisis">Basic Crisis Intervention</label>
+                                    <span class="point-badge">1%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>1.c. VAW Desk Location: (5%)</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-option" onclick="toggleCheckbox('q1c_location')">
+                                    <input type="checkbox" id="q1c_location" onchange="calculateScores()">
+                                    <label for="q1c_location">Located within the barangay hall or near Punong Barangay office</label>
+                                    <span class="point-badge">5%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>1.d. Interview Room: (5%)</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-option" onclick="toggleCheckbox('q1d_room')">
+                                    <input type="checkbox" id="q1d_room" onchange="calculateScores()">
+                                    <label for="q1d_room">Has a separate room or enclosed area for private interviews</label>
+                                    <span class="point-badge">5%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="button" class="btn btn-secondary" onclick="previousStep()">← Previous</button>
+                            <button type="button" class="btn btn-primary" onclick="nextStep()">Next →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Section 2 - Resources -->
+                <div class="step" id="step2">
+                    <div class="card">
+                        <h2 class="card-title">Section 2: Resources</h2>
+
+                        <div class="barangay-info">
+                            <strong>Barangay:</strong> <span id="barangay_name_2"></span><br>
+                            <strong>Date:</strong> <span id="assessment_date_2"></span><br>
+                            <strong>Score:</strong> <span id="score2_display" style="font-size: 20px; color: #1e8e3e;">0/25</span>
+                        </div>
+
+                        <!-- Hidden input to store calculated score -->
+                        <input type="hidden" id="section2_score" name="section2_score" value="0">
+
+                        <div class="form-group">
+                            <label>2.a. Furniture and Vehicle: (4% total)</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2a_table')">
+                                    <input type="checkbox" id="q2a_table" onchange="calculateScores()">
+                                    <label for="q2a_table">Table and chair</label>
+                                    <span class="point-badge">1%</span>
+                                </div>
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2a_cabinet')">
+                                    <input type="checkbox" id="q2a_cabinet" onchange="calculateScores()">
+                                    <label for="q2a_cabinet">Filing cabinet/storage area</label>
+                                    <span class="point-badge">1%</span>
+                                </div>
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2a_bed')">
+                                    <input type="checkbox" id="q2a_bed" onchange="calculateScores()">
+                                    <label for="q2a_bed">Sofa bed, folding bed, or mat</label>
+                                    <span class="point-badge">1%</span>
+                                </div>
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2a_vehicle')">
+                                    <input type="checkbox" id="q2a_vehicle" onchange="calculateScores()">
+                                    <label for="q2a_vehicle">Availability of vehicle/transportation for victim-survivors</label>
+                                    <span class="point-badge">1%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>2.b. Equipment and Supplies: (6% total)</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2b_phone')">
+                                    <input type="checkbox" id="q2b_phone" onchange="calculateScores()">
+                                    <label for="q2b_phone">Landline or mobile phone</label>
+                                    <span class="point-badge">2%</span>
+                                </div>
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2b_computer')">
+                                    <input type="checkbox" id="q2b_computer" onchange="calculateScores()">
+                                    <label for="q2b_computer">Computer or typewriter for logging/monitoring</label>
+                                    <span class="point-badge">1%</span>
+                                </div>
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2b_camera')">
+                                    <input type="checkbox" id="q2b_camera" onchange="calculateScores()">
+                                    <label for="q2b_camera">Camera for documenting physical evidence</label>
+                                    <span class="point-badge">1%</span>
+                                </div>
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2b_recorder')">
+                                    <input type="checkbox" id="q2b_recorder" onchange="calculateScores()">
+                                    <label for="q2b_recorder">Tape or voice recorder for case narratives</label>
+                                    <span class="point-badge">1%</span>
+                                </div>
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2b_firstaid')">
+                                    <input type="checkbox" id="q2b_firstaid" onchange="calculateScores()">
+                                    <label for="q2b_firstaid">First aid kit and other medicines</label>
+                                    <span class="point-badge">1%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>2.c. Monitoring Tools: (5% total)</label>
+                            <div class="checkbox-group">
+                                <div style="margin-bottom: 15px; font-weight: 600; color: #333;">Logbooks:</div>
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2c_logbook1')">
+                                    <input type="checkbox" id="q2c_logbook1" onchange="calculateScores()">
+                                    <label for="q2c_logbook1">Logbook 1: for RA 9262 cases</label>
+                                    <span class="point-badge">1.5%</span>
+                                </div>
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2c_logbook2')">
+                                    <input type="checkbox" id="q2c_logbook2" onchange="calculateScores()">
+                                    <label for="q2c_logbook2">Logbook 2: for other VAW related cases</label>
+                                    <span class="point-badge">1.5%</span>
+                                </div>
+
+                                <div style="margin: 15px 0; font-weight: 600; color: #333;">Forms:</div>
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2c_intake')">
+                                    <input type="checkbox" id="q2c_intake" onchange="calculateScores()">
+                                    <label for="q2c_intake">VAW Desk Intake Form</label>
+                                    <span class="point-badge">0.5%</span>
+                                </div>
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2c_referral')">
+                                    <input type="checkbox" id="q2c_referral" onchange="calculateScores()">
+                                    <label for="q2c_referral">Referral Form</label>
+                                    <span class="point-badge">0.5%</span>
+                                </div>
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2c_feedback')">
+                                    <input type="checkbox" id="q2c_feedback" onchange="calculateScores()">
+                                    <label for="q2c_feedback">Feedback Form</label>
+                                    <span class="point-badge">0.5%</span>
+                                </div>
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2c_bpo')">
+                                    <input type="checkbox" id="q2c_bpo" onchange="calculateScores()">
+                                    <label for="q2c_bpo">BPO Application Form</label>
+                                    <span class="point-badge">0.5%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>2.d. References: (5% total)</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2d_directory')">
+                                    <input type="checkbox" id="q2d_directory" onchange="calculateScores()">
+                                    <label for="q2d_directory">Directory of service providers</label>
+                                    <span class="point-badge">2%</span>
+                                </div>
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2d_handbook')">
+                                    <input type="checkbox" id="q2d_handbook" onchange="calculateScores()">
+                                    <label for="q2d_handbook">VAW Desk Handbook</label>
+                                    <span class="point-badge">1%</span>
+                                </div>
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2d_books')">
+                                    <input type="checkbox" id="q2d_books" onchange="calculateScores()">
+                                    <label for="q2d_books">VAW-related reference books, brochures</label>
+                                    <span class="point-badge">1%</span>
+                                </div>
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2d_bpo_flow')">
+                                    <input type="checkbox" id="q2d_bpo_flow" onchange="calculateScores()">
+                                    <label for="q2d_bpo_flow">Flowchart on BPO issuance</label>
+                                    <span class="point-badge">0.5%</span>
+                                </div>
+                                <div class="checkbox-option" onclick="toggleCheckbox('q2d_vaw_flow')">
+                                    <input type="checkbox" id="q2d_vaw_flow" onchange="calculateScores()">
+                                    <label for="q2d_vaw_flow">Flowchart on Handling of VAW Cases</label>
+                                    <span class="point-badge">0.5%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="button" class="btn btn-secondary" onclick="previousStep()">← Previous</button>
+                            <button type="button" class="btn btn-primary" onclick="nextStep()">Next →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Section 3 - Policies & Plans -->
+                <div class="step" id="step3">
+                    <div class="card">
+                        <h2 class="card-title">Section 3: Policies, Plans, and Budget</h2>
+
+                        <div class="barangay-info">
+                            <strong>Barangay:</strong> <span id="barangay_name_3"></span><br>
+                            <strong>Date:</strong> <span id="assessment_date_3"></span><br>
+                            <strong>Score:</strong> <span id="score3_display" style="font-size: 20px; color: #1e8e3e;">0/25</span>
+                        </div>
+
+                        <!-- Hidden input to store calculated score -->
+                        <input type="hidden" id="section3_score" name="section3_score" value="0">
+
+                        <div class="form-group">
+                            <label>3.a. Annual Investment Program (AIP): (5%)</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-option" onclick="toggleCheckbox('q3a_aip')">
+                                    <input type="checkbox" id="q3a_aip" onchange="calculateScores()">
+                                    <label for="q3a_aip">Annual Investment Program (AIP) reflecting the approved Barangay GAD Plan and Budget</label>
+                                    <span class="point-badge">5%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>3.b. Certificate of Review: (5%)</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-option" onclick="toggleCheckbox('q3b_cert')">
+                                    <input type="checkbox" id="q3b_cert" onchange="calculateScores()">
+                                    <label for="q3b_cert">Certificate of Review and endorsement of the 2024 GAD Plan and Budget</label>
+                                    <span class="point-badge">5%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>3.c. GAD Plan Programs: (5%)</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-option" onclick="toggleCheckbox('q3c_gad')">
+                                    <input type="checkbox" id="q3c_gad" onchange="calculateScores()">
+                                    <label for="q3c_gad">Gender-responsive program and activities to address gender-based violence is indicated in the approved Barangay GAD Plan and Budget</label>
+                                    <span class="point-badge">5%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>3.d. BDP Programs: (5%)</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-option" onclick="toggleCheckbox('q3d_bdp')">
+                                    <input type="checkbox" id="q3d_bdp" onchange="calculateScores()">
+                                    <label for="q3d_bdp">Gender-responsive program and activities to address gender-based violence is integrated in the Barangay Development Plan (BDP)</label>
+                                    <span class="point-badge">5%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="button" class="btn btn-secondary" onclick="previousStep()">← Previous</button>
+                            <button type="button" class="btn btn-primary" onclick="nextStep()">Next →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Section 4 - Accomplishments -->
+                <div class="step" id="step4">
+                    <div class="card">
+                        <h2 class="card-title">Section 4: Accomplishments</h2>
+
+                        <div class="barangay-info">
+                            <strong>Barangay:</strong> <span id="barangay_name_4"></span><br>
+                            <strong>Date:</strong> <span id="assessment_date_4"></span><br>
+                            <strong>Score:</strong> <span id="score4_display" style="font-size: 20px; color: #1e8e3e;">0/25</span>
+                        </div>
+
+                        <!-- Hidden input to store calculated score -->
+                        <input type="hidden" id="section4_score" name="section4_score" value="0">
+
+                        <div class="form-group">
+                            <label>4.a. Annual Accomplishment Report: (10%)</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-option" onclick="toggleCheckbox('q4a_annual')">
+                                    <input type="checkbox" id="q4a_annual" onchange="calculateScores()">
+                                    <label for="q4a_annual">Annual Accomplishment Report based on the approved Barangay GAD Plan and Budget</label>
+                                    <span class="point-badge">10%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>4.b. Quarterly Accomplishment Reports: (10%)</label>
+                            <div class="radio-group">
+                                <div class="radio-option" onclick="selectRadio('q4b', '4', 10)">
+                                    <input type="radio" name="q4b" value="4" id="q4b_4" onchange="calculateScores()">
+                                    <label for="q4b_4">4 quarterly accomplishment reports submitted (with received stamp)</label>
+                                    <span class="point-badge">10%</span>
+                                </div>
+                                <div class="radio-option" onclick="selectRadio('q4b', '3', 7.5)">
+                                    <input type="radio" name="q4b" value="3" id="q4b_3" onchange="calculateScores()">
+                                    <label for="q4b_3">3 quarterly accomplishment reports</label>
+                                    <span class="point-badge">7.5%</span>
+                                </div>
+                                <div class="radio-option" onclick="selectRadio('q4b', '2', 5)">
+                                    <input type="radio" name="q4b" value="2" id="q4b_2" onchange="calculateScores()">
+                                    <label for="q4b_2">2 quarterly accomplishment reports</label>
+                                    <span class="point-badge">5%</span>
+                                </div>
+                                <div class="radio-option" onclick="selectRadio('q4b', '1', 2.5)">
+                                    <input type="radio" name="q4b" value="1" id="q4b_1" onchange="calculateScores()">
+                                    <label for="q4b_1">1 quarterly accomplishment report</label>
+                                    <span class="point-badge">2.5%</span>
+                                </div>
+                                <div class="radio-option" onclick="selectRadio('q4b', '0', 0)">
+                                    <input type="radio" name="q4b" value="0" id="q4b_0" onchange="calculateScores()">
+                                    <label for="q4b_0">None</label>
+                                    <span class="point-badge">0%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>4.c. Updated Database/Records: (10%)</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-option" onclick="toggleCheckbox('q4c_database')">
+                                    <input type="checkbox" id="q4c_database" onchange="calculateScores()">
+                                    <label for="q4c_database">Updated database/records of all VAW cases reported in the barangay</label>
+                                    <span class="point-badge">10%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>4.d. State of Barangay Address (SOBA) Inclusion: (10%)</label>
+                            <div class="radio-group">
+                                <div class="radio-option" onclick="selectRadio('q4d', '2', 10)">
+                                    <input type="radio" name="q4d" value="2" id="q4d_2" onchange="calculateScores()">
+                                    <label for="q4d_2">Accomplishments of VAW Desk included in two (2) SOBA</label>
+                                    <span class="point-badge">10%</span>
+                                </div>
+                                <div class="radio-option" onclick="selectRadio('q4d', '1', 5)">
+                                    <input type="radio" name="q4d" value="1" id="q4d_1" onchange="calculateScores()">
+                                    <label for="q4d_1">Accomplishments of VAW Desk included in one (1) SOBA</label>
+                                    <span class="point-badge">5%</span>
+                                </div>
+                                <div class="radio-option" onclick="selectRadio('q4d', '0', 0)">
+                                    <input type="radio" name="q4d" value="0" id="q4d_0" onchange="calculateScores()">
+                                    <label for="q4d_0">Accomplishments of VAW Desk not included in SOBA</label>
+                                    <span class="point-badge">0%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="button" class="btn btn-secondary" onclick="previousStep()">← Previous</button>
+                            <button type="button" class="btn btn-primary" onclick="nextStep()">Next →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: Review & Submit -->
+                <div class="step" id="step5">
+                    <div class="card">
+                        <h2 class="card-title">Review & Submit</h2>
+
+                        <div class="summary-section">
+                            <h3>Assessment Summary</h3>
+                            <div class="summary-item">
+                                <span>Barangay:</span>
+                                <strong id="summary_barangay"></strong>
+                            </div>
+                            <div class="summary-item">
+                                <span>Assessment Date:</span>
+                                <strong id="summary_date"></strong>
+                            </div>
+                            <div class="summary-item">
+                                <span>Rater:</span>
+                                <strong id="summary_rater"></strong>
+                            </div>
+                        </div>
+
+                        <div class="summary-section">
+                            <h3>Section Scores</h3>
+                            <div class="summary-item">
+                                <span>Section 1: Establishment</span>
+                                <strong id="summary_score1">0/25</strong>
+                            </div>
+                            <div class="summary-item">
+                                <span>Section 2: Resources</span>
+                                <strong id="summary_score2">0/25</strong>
+                            </div>
+                            <div class="summary-item">
+                                <span>Section 3: Policies & Plans</span>
+                                <strong id="summary_score3">0/25</strong>
+                            </div>
+                            <div class="summary-item">
+                                <span>Section 4: Accomplishments</span>
+                                <strong id="summary_score4">0/25</strong>
+                            </div>
+                        </div>
+
+                        <div class="score-display">
+                            <div class="label">Total Score</div>
+                            <div class="big-score" id="total_score_display">0/100</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="status">Status *</label>
+                            <select id="status" name="status" required>
+                                <option value="pending">Pending</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="completed" selected>Completed</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="remarks">Remarks</label>
+                            <textarea id="remarks" name="remarks" rows="4" placeholder="Enter any additional notes or observations..."></textarea>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="button" class="btn btn-secondary" onclick="previousStep()">← Previous</button>
+                            <button type="button" class="btn btn-success" onclick="submitAssessment()">Submit Assessment</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View Assessments Tab -->
+            <div id="viewTab" class="tab-content">
+                <div class="card">
+                    <h2 class="card-title">All Assessments</h2>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Rater</th>
+                                    <th>Barangay</th>
+                                    <th>Date</th>
+                                    <th>Sec 1</th>
+                                    <th>Sec 2</th>
+                                    <th>Sec 3</th>
+                                    <th>Sec 4</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assessmentsTableBody">
+                                <tr>
+                                    <td colspan="11" class="loading">
+                                        <div class="loading-spinner"></div>
+                                        Loading assessments...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Tab -->
+            <div id="reportsTab" class="tab-content">
+                <div class="card">
+                    <h2 class="card-title">Assessment Reports & Statistics</h2>
+                    <div id="reportsContent">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            Loading reports...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- External JS -->
+    <script src="script.js"></script>
+</body>
+</html>

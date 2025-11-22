@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"c:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE vaw_consolidator; DELETE FROM barangays;\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

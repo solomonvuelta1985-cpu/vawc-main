@@ -1,0 +1,2 @@
+# Protect log files from direct access
+Deny from all

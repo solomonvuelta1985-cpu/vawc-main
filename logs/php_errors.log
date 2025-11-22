@@ -1,0 +1,9 @@
+# PHP Error Log
+# This file will contain PHP errors and warnings
+# Location: c:\xampp\htdocs\vawc-main\logs\php_errors.log
+# Created: 2025-11-22
+
+[2025-11-22 17:51:01] EXCEPTION: The number of elements in the type definition string must match the number of bind variables in C:\xampp\htdocs\vawc-main\insert.php on line 62
+Stack trace:
+#0 C:\xampp\htdocs\vawc-main\insert.php(62): mysqli_stmt->bind_param('iisddddds', '1', '1', '2025-11-22', 25, 25, 25, 25, 100, 'completed', '')
+#1 {main}
