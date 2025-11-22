@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAW Assessment - TEST MODE</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+        }
+        .test-banner {
+            background: #ff9800;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        h1 { color: #0066CC; margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-primary {
+            background: #0066CC;
+            color: white;
+        }
+        .btn-primary:hover { background: #0052A3; }
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .btn-success {
+            background: #28A745;
+            color: white;
+        }
+        .score-display {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .score-display .big-score {
+            font-size: 48px;
+            font-weight: bold;
+            color: #0066CC;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="test-banner">
+            ⚠️ TEST MODE - Only 2 Barangays Required
+        </div>
+
+        <h1>🧪 VAW Assessment - Quick Test</h1>
+
+        <div id="step1">
+            <h2>Step 1: Select First Barangay</h2>
+            <div class="form-group">
+                <label>Barangay Name:</label>
+                <select id="barangay1">
+                    <option value="">-- Select --</option>
+                    <option value="Adaoag">Adaoag</option>
+                    <option value="Alba">Alba</option>
+                    <option value="Annayatan">Annayatan</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Quick Score (0-100):</label>
+                <input type="number" id="score1" min="0" max="100" value="75">
+            </div>
+            <button class="btn btn-primary" onclick="saveBarangay1()">Save First Barangay →</button>
+        </div>
+
+        <div id="step2" style="display:none;">
+            <h2>Step 2: Select Second Barangay</h2>
+            <div class="form-group">
+                <label>Barangay Name:</label>
+                <select id="barangay2">
+                    <option value="">-- Select --</option>
+                    <option value="Adaoag">Adaoag</option>
+                    <option value="Alba">Alba</option>
+                    <option value="Annayatan">Annayatan</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Quick Score (0-100):</label>
+                <input type="number" id="score2" min="0" max="100" value="82">
+            </div>
+            <button class="btn btn-primary" onclick="saveBarangay2()">Save Second Barangay →</button>
+        </div>
+
+        <div id="step3" style="display:none;">
+            <h2>✅ Test Complete!</h2>
+
+            <div class="score-display">
+                <div>Assessment Summary</div>
+                <div class="big-score" id="summary">2/2</div>
+                <div>Barangays Completed</div>
+            </div>
+
+            <button class="btn btn-success" onclick="submitTest()">
+                📧 Test Email Submission
+            </button>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>
+        // Initialize EmailJS with new SDK
+        (function() {
+            emailjs.init({
+                publicKey: "zquhILJk68y45UqRw"
+            });
+        })();
+
+        let assessment1 = null;
+        let assessment2 = null;
+
+        function saveBarangay1() {
+            const brgy = document.getElementById('barangay1').value;
+            const score = document.getElementById('score1').value;
+
+            if (!brgy) {
+                alert('Please select a barangay');
+                return;
+            }
+
+            assessment1 = { barangay: brgy, score: parseFloat(score) };
+
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+        }
+
+        function saveBarangay2() {
+            const brgy = document.getElementById('barangay2').value;
+            const score = document.getElementById('score2').value;
+
+            if (!brgy) {
+                alert('Please select a barangay');
+                return;
+            }
+
+            if (brgy === assessment1.barangay) {
+                alert('Please select a different barangay!');
+                return;
+            }
+
+            assessment2 = { barangay: brgy, score: parseFloat(score) };
+
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'block';
+        }
+
+        function submitTest() {
+            console.log('Starting email test...');
+
+            const exportData = {
+                assessor: 'Richmond Rosete - TEST',
+                position: 'Job Order',
+                municipality: 'Baggao, Cagayan',
+                exportDate: new Date().toISOString(),
+                totalAssessments: 2,
+                completedAssessments: 2,
+                assessments: {
+                    [assessment1.barangay]: {
+                        barangay: assessment1.barangay,
+                        totalScore: assessment1.score,
+                        status: 'completed'
+                    },
+                    [assessment2.barangay]: {
+                        barangay: assessment2.barangay,
+                        totalScore: assessment2.score,
+                        status: 'completed'
+                    }
+                }
+            };
+
+            // Download JSON
+            const json = JSON.stringify(exportData, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `VAW_TEST_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+
+            // Send email
+            const templateParams = {
+                name: 'Richmond Rosete - TEST',
+                submission_date: new Date().toLocaleString(),
+                to_email: 'richmondrosete19@gmail.com'
+            };
+
+            emailjs.send('service_ca84be8', 'template_exlk9ur', templateParams)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    alert('✅ TEST SUCCESSFUL!\n\n✓ Email sent to richmondrosete19@gmail.com\n✓ JSON file downloaded\n\nCheck your email!');
+                }, function(error) {
+                    console.error('FAILED...', error);
+                    alert('⚠️ Email failed but JSON downloaded.\n\nError: ' + JSON.stringify(error));
+                });
+        }
+    </script>
+</body>
+</html>

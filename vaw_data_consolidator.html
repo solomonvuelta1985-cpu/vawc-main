@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAW Data Consolidator - Baggao</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0066CC 0%, #004C99 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .drop-zone {
+            border: 3px dashed #0066CC;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            background: #f8f9fa;
+            transition: all 0.3s;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            background: #e3f2fd;
+            border-color: #004C99;
+            transform: scale(1.02);
+        }
+
+        .drop-zone .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .drop-zone h2 {
+            color: #0066CC;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .drop-zone p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .file-list {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .file-list h3 {
+            color: #0066CC;
+            margin-bottom: 15px;
+        }
+
+        .file-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .file-item .name {
+            flex: 1;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .file-item .status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .processing {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+            display: none;
+        }
+
+        .processing .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0066CC;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            display: none;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #0066CC 0%, #004C99 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .summary-card .number {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .summary-card .label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .download-section {
+            background: #e8f5e9;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .download-section h3 {
+            color: #28A745;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #28A745 0%, #20C997 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .alert {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .instructions {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #0066CC;
+        }
+
+        .instructions h3 {
+            color: #0066CC;
+            margin-bottom: 15px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 VAW Data Consolidator</h1>
+            <p>Municipality of Baggao - Consolidated Assessment Report Generator</p>
+        </div>
+
+        <div class="content">
+            <div class="instructions">
+                <h3>📋 Instructions:</h3>
+                <ol>
+                    <li>Collect JSON files from all 10 raters (one file per rater)</li>
+                    <li>Drag and drop all 10 files into the box below, or click to browse</li>
+                    <li>Wait for processing (takes about 30 seconds)</li>
+                    <li>Download the comprehensive Excel report</li>
+                    <li>Review the report and add your analysis</li>
+                    <li>Send the final report to the Chairman</li>
+                </ol>
+            </div>
+
+            <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                <div class="icon">📁</div>
+                <h2>Drop JSON Files Here</h2>
+                <p>or click to browse your computer</p>
+                <p style="margin-top: 10px; color: #999; font-size: 14px;">Accepts: .json files from raters</p>
+            </div>
+
+            <input type="file" id="fileInput" accept=".json" multiple>
+
+            <div class="file-list" id="fileList">
+                <h3>📑 Loaded Files:</h3>
+                <div id="fileItems"></div>
+            </div>
+
+            <div class="processing" id="processing">
+                <div class="spinner"></div>
+                <h3>Processing Data...</h3>
+                <p>Consolidating assessments and calculating statistics...</p>
+            </div>
+
+            <div class="results" id="results">
+                <div class="alert alert-success">
+                    <strong>✅ Processing Complete!</strong><br>
+                    Your consolidated report is ready for download.
+                </div>
+
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="label">Total Raters</div>
+                        <div class="number" id="totalRaters">0</div>
+                        <div class="label">Files Processed</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="label">Total Assessments</div>
+                        <div class="number" id="totalAssessments">0</div>
+                        <div class="label">Barangays Evaluated</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="label">Average Score</div>
+                        <div class="number" id="avgScore">0</div>
+                        <div class="label">Out of 100</div>
+                    </div>
+                </div>
+
+                <div class="download-section">
+                    <h3>📥 Download Your Report</h3>
+                    <p style="margin-bottom: 20px; color: #333;">
+                        Complete Excel workbook with multiple sheets:<br>
+                        Summary, By Barangay, By Section, Rater Comparison, Charts, Raw Data
+                    </p>
+                    <button class="btn btn-primary" onclick="downloadExcel()">
+                        📊 Download Excel Report
+                    </button>
+                    <button class="btn btn-secondary" onclick="location.reload()">
+                        🔄 Process New Files
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let processedData = null;
+        let allRaterData = [];
+
+        // File input handler
+        document.getElementById('fileInput').addEventListener('change', handleFiles);
+
+        // Drag and drop handlers
+        const dropZone = document.getElementById('dropZone');
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files).filter(f => f.name.endsWith('.json'));
+            if (files.length > 0) {
+                processFiles(files);
+            } else {
+                alert('Please drop JSON files only');
+            }
+        });
+
+        function handleFiles(e) {
+            const files = Array.from(e.target.files);
+            processFiles(files);
+        }
+
+        async function processFiles(files) {
+            if (files.length === 0) {
+                alert('No files selected');
+                return;
+            }
+
+            // Show file list
+            document.getElementById('fileList').style.display = 'block';
+            const fileItems = document.getElementById('fileItems');
+            fileItems.innerHTML = '';
+
+            allRaterData = [];
+
+            for (const file of files) {
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                item.innerHTML = `
+                    <span class="name">${file.name}</span>
+                    <span class="status" id="status-${file.name}">Loading...</span>
+                `;
+                fileItems.appendChild(item);
+
+                try {
+                    const text = await file.text();
+                    const data = JSON.parse(text);
+
+                    // VALIDATION: Check if JSON has required structure
+                    if (!data.assessments || typeof data.assessments !== 'object') {
+                        throw new Error('Invalid format: Missing assessments data');
+                    }
+
+                    if (!data.assessor) {
+                        throw new Error('Invalid format: Missing assessor name');
+                    }
+
+                    // Check if assessments object has data
+                    const assessmentCount = Object.keys(data.assessments).length;
+                    if (assessmentCount === 0) {
+                        throw new Error('No assessment data found');
+                    }
+
+                    // Validate at least one assessment has required fields
+                    const firstAssessment = Object.values(data.assessments)[0];
+                    if (!firstAssessment.totalScore && firstAssessment.totalScore !== 0) {
+                        throw new Error('Invalid format: Missing score data');
+                    }
+
+                    allRaterData.push(data);
+
+                    document.getElementById(`status-${file.name}`).className = 'status success';
+                    document.getElementById(`status-${file.name}`).textContent = `✓ Loaded (${assessmentCount} barangays)`;
+                } catch (error) {
+                    document.getElementById(`status-${file.name}`).className = 'status error';
+
+                    // Provide specific error message
+                    let errorMsg = '✗ ';
+                    if (error instanceof SyntaxError) {
+                        errorMsg += 'Corrupted JSON file';
+                    } else {
+                        errorMsg += error.message;
+                    }
+
+                    document.getElementById(`status-${file.name}`).textContent = errorMsg;
+                    console.error(`Error loading ${file.name}:`, error);
+                }
+            }
+
+            // Show summary of file loading
+            const totalFiles = files.length;
+            const successCount = allRaterData.length;
+            const failedCount = totalFiles - successCount;
+
+            if (successCount > 0) {
+                if (failedCount > 0) {
+                    alert(`⚠️ FILE LOADING COMPLETE\n\n✅ Successfully loaded: ${successCount}/${totalFiles} files\n❌ Failed: ${failedCount} file(s)\n\nCorrupted or invalid files will be skipped.\nConsolidation will proceed with valid files only.`);
+                }
+                setTimeout(() => processData(), 1000);
+            } else {
+                alert('❌ ALL FILES FAILED TO LOAD\n\nPossible reasons:\n• Files are corrupted\n• Wrong file format\n• Files are not valid VAW assessment JSON\n\nPlease check your files and try again.');
+                document.getElementById('fileList').style.display = 'none';
+            }
+        }
+
+        function processData() {
+            document.getElementById('processing').style.display = 'block';
+
+            setTimeout(() => {
+                // Consolidate all assessments
+                const consolidated = consolidateAssessments();
+                processedData = consolidated;
+
+                // Update summary
+                document.getElementById('totalRaters').textContent = allRaterData.length;
+                document.getElementById('totalAssessments').textContent = consolidated.totalAssessments;
+                document.getElementById('avgScore').textContent = consolidated.averageScore.toFixed(1);
+
+                // Show results
+                document.getElementById('processing').style.display = 'none';
+                document.getElementById('results').style.display = 'block';
+            }, 2000);
+        }
+
+        function consolidateAssessments() {
+            const byBarangay = {};
+            let totalScore = 0;
+            let totalCount = 0;
+
+            // Process each rater's data
+            allRaterData.forEach(raterData => {
+                const assessments = raterData.assessments || {};
+                
+                Object.keys(assessments).forEach(barangay => {
+                    const assessment = assessments[barangay];
+                    
+                    if (!byBarangay[barangay]) {
+                        byBarangay[barangay] = {
+                            name: barangay,
+                            scores: [],
+                            section1Scores: [],
+                            section2Scores: [],
+                            section3Scores: [],
+                            section4Scores: []
+                        };
+                    }
+                    
+                    if (assessment.status === 'completed') {
+                        byBarangay[barangay].scores.push(assessment.totalScore || 0);
+                        byBarangay[barangay].section1Scores.push(assessment.section1Score || 0);
+                        byBarangay[barangay].section2Scores.push(assessment.section2Score || 0);
+                        byBarangay[barangay].section3Scores.push(assessment.section3Score || 0);
+                        byBarangay[barangay].section4Scores.push(assessment.section4Score || 0);
+                        
+                        totalScore += (assessment.totalScore || 0);
+                        totalCount++;
+                    }
+                });
+            });
+
+            // Calculate averages
+            const summary = Object.keys(byBarangay).map(name => {
+                const b = byBarangay[name];
+                return {
+                    barangay: name,
+                    ratersCompleted: b.scores.length,
+                    avgTotal: average(b.scores),
+                    avgSection1: average(b.section1Scores),
+                    avgSection2: average(b.section2Scores),
+                    avgSection3: average(b.section3Scores),
+                    avgSection4: average(b.section4Scores),
+                    stdDev: standardDeviation(b.scores),
+                    minScore: Math.min(...b.scores),
+                    maxScore: Math.max(...b.scores)
+                };
+            });
+
+            return {
+                totalAssessments: totalCount,
+                averageScore: totalScore / totalCount,
+                byBarangay: summary,
+                rawData: allRaterData
+            };
+        }
+
+        function average(arr) {
+            if (arr.length === 0) return 0;
+            return arr.reduce((a, b) => a + b, 0) / arr.length;
+        }
+
+        function standardDeviation(arr) {
+            if (arr.length === 0) return 0;
+            const avg = average(arr);
+            const squareDiffs = arr.map(value => Math.pow(value - avg, 2));
+            return Math.sqrt(average(squareDiffs));
+        }
+
+        function downloadExcel() {
+            if (!processedData) {
+                alert('No data to download');
+                return;
+            }
+
+            const workbook = XLSX.utils.book_new();
+
+            // Sheet 1: Summary by Barangay
+            const summaryData = [
+                ['VAW DESK ASSESSMENT CONSOLIDATED REPORT'],
+                ['Municipality of Baggao, Cagayan'],
+                ['Report Generated: ' + new Date().toLocaleDateString()],
+                ['Coordinator: Richmond Rosete'],
+                [],
+                ['Barangay', 'Raters', 'Avg Total', 'Avg Sec 1', 'Avg Sec 2', 'Avg Sec 3', 'Avg Sec 4', 'Std Dev', 'Min', 'Max']
+            ];
+
+            processedData.byBarangay.forEach(b => {
+                summaryData.push([
+                    b.barangay,
+                    b.ratersCompleted,
+                    b.avgTotal.toFixed(1),
+                    b.avgSection1.toFixed(1),
+                    b.avgSection2.toFixed(1),
+                    b.avgSection3.toFixed(1),
+                    b.avgSection4.toFixed(1),
+                    b.stdDev.toFixed(2),
+                    b.minScore.toFixed(1),
+                    b.maxScore.toFixed(1)
+                ]);
+            });
+
+            const ws1 = XLSX.utils.aoa_to_sheet(summaryData);
+            XLSX.utils.book_append_sheet(workbook, ws1, 'Summary by Barangay');
+
+            // Sheet 2: Overall Statistics
+            const statsData = [
+                ['OVERALL STATISTICS'],
+                [],
+                ['Total Raters', allRaterData.length],
+                ['Total Assessments', processedData.totalAssessments],
+                ['Average Score', processedData.averageScore.toFixed(1)],
+                ['Total Barangays', processedData.byBarangay.length],
+                [],
+                ['SECTION AVERAGES'],
+                ['Section 1 (Establishment)', calculateOverallSectionAvg(1)],
+                ['Section 2 (Resources)', calculateOverallSectionAvg(2)],
+                ['Section 3 (Policies & Plans)', calculateOverallSectionAvg(3)],
+                ['Section 4 (Accomplishments)', calculateOverallSectionAvg(4)]
+            ];
+
+            const ws2 = XLSX.utils.aoa_to_sheet(statsData);
+            XLSX.utils.book_append_sheet(workbook, ws2, 'Overall Statistics');
+
+            // Sheet 3: Raw Data (all assessments)
+            const rawData = [
+                ['Rater', 'Barangay', 'Date', 'Total Score', 'Section 1', 'Section 2', 'Section 3', 'Section 4', 'Status']
+            ];
+
+            allRaterData.forEach(rater => {
+                const assessments = rater.assessments || {};
+                Object.keys(assessments).forEach(barangay => {
+                    const a = assessments[barangay];
+                    rawData.push([
+                        rater.assessor || 'Unknown',
+                        barangay,
+                        a.date || '',
+                        (a.totalScore || 0).toFixed(1),
+                        (a.section1Score || 0).toFixed(1),
+                        (a.section2Score || 0).toFixed(1),
+                        (a.section3Score || 0).toFixed(1),
+                        (a.section4Score || 0).toFixed(1),
+                        a.status || 'unknown'
+                    ]);
+                });
+            });
+
+            const ws3 = XLSX.utils.aoa_to_sheet(rawData);
+            XLSX.utils.book_append_sheet(workbook, ws3, 'Raw Data');
+
+            // Generate filename
+            const filename = `VAW_Consolidated_Report_Baggao_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+            // Download
+            XLSX.writeFile(workbook, filename);
+        }
+
+        function calculateOverallSectionAvg(section) {
+            let total = 0;
+            let count = 0;
+            
+            processedData.byBarangay.forEach(b => {
+                const key = `avgSection${section}`;
+                if (b[key] !== undefined) {
+                    total += b[key];
+                    count++;
+                }
+            });
+            
+            return count > 0 ? (total / count).toFixed(1) : '0.0';
+        }
+    </script>
+</body>
+</html>

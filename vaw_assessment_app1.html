@@ -1,0 +1,1995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAW Desk Assessment - Baggao</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0066CC 0%, #004C99 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28A745 0%, #20C997 100%);
+            transition: width 0.3s ease;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .progress-text {
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #666;
+            background: #f8f9fa;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0066CC;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #0066CC;
+        }
+
+        .barangay-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .barangay-info strong {
+            display: block;
+            color: #0066CC;
+            margin-bottom: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group select,
+        .form-group input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #0066CC;
+        }
+
+        .radio-group,
+        .checkbox-group {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .radio-option,
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .radio-option:hover,
+        .checkbox-option:hover {
+            border-color: #0066CC;
+            background: #f0f8ff;
+        }
+
+        .radio-option.selected,
+        .checkbox-option.checked {
+            border-color: #28A745;
+            background: #e8f5e9;
+        }
+
+        .radio-option input[type="radio"],
+        .checkbox-option input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+
+        .radio-option label,
+        .checkbox-option label {
+            flex: 1;
+            cursor: pointer;
+            margin: 0;
+            font-weight: 400;
+        }
+
+        .point-badge {
+            background: #0066CC;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #28A745 0%, #20C997 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .score-display .big-score {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .score-display .label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-previous {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-previous:hover {
+            background: #5a6268;
+        }
+
+        .btn-next {
+            background: #0066CC;
+            color: white;
+        }
+
+        .btn-next:hover {
+            background: #0052A3;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #28A745 0%, #20C997 100%);
+            color: white;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .summary-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .summary-section h3 {
+            color: #0066CC;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0066CC;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .dashboard {
+            padding: 20px;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-header h2 {
+            color: #0066CC;
+            margin-bottom: 10px;
+        }
+
+        .progress-summary {
+            background: linear-gradient(135deg, #0066CC 0%, #004C99 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .progress-summary .big-number {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .barangay-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .barangay-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .barangay-card:hover {
+            border-color: #0066CC;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .barangay-card.completed {
+            background: #e8f5e9;
+            border-color: #28A745;
+        }
+
+        .barangay-card.in-progress {
+            background: #fff3cd;
+            border-color: #FFC107;
+        }
+
+        .barangay-card .name {
+            font-weight: 600;
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .barangay-card .score {
+            font-size: 20px;
+            font-weight: bold;
+            color: #0066CC;
+        }
+
+        .barangay-card .status {
+            font-size: 11px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .submit-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .submit-section .btn {
+            max-width: 400px;
+            margin: 10px auto;
+        }
+
+        @media (max-width: 600px) {
+            .barangay-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🏛️ Municipality of Baggao</h1>
+            <p>VAW Desk Functionality Assessment 2025</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+        <div class="progress-text" id="progressText">Step 0 of 7</div>
+
+        <!-- Dashboard (Initial Screen) -->
+        <div class="dashboard" id="dashboard">
+            <div class="dashboard-header">
+                <h2>Assessment Dashboard</h2>
+                <p id="raterInfo">Richmond Rosete - Job Order</p>
+            </div>
+
+            <div class="progress-summary">
+                <div class="label">Overall Progress</div>
+                <div class="big-number" id="overallProgress">0/48</div>
+                <div class="label">Barangays Assessed</div>
+            </div>
+
+            <div class="form-group">
+                <label for="dashboardBarangay">Select Barangay to Assess:</label>
+                <select id="dashboardBarangay">
+                    <option value="">-- Choose Barangay --</option>
+                    <option value="Adaoag">Adaoag</option>
+                    <option value="Agaman (Proper)">Agaman (Proper)</option>
+                    <option value="Agaman Norte">Agaman Norte</option>
+                    <option value="Agaman Sur">Agaman Sur</option>
+                    <option value="Alba">Alba</option>
+                    <option value="Annayatan">Annayatan</option>
+                    <option value="Asassi">Asassi</option>
+                    <option value="Asinga-Via">Asinga-Via</option>
+                    <option value="Awallan">Awallan</option>
+                    <option value="Bacagan">Bacagan</option>
+                    <option value="Bagunot">Bagunot</option>
+                    <option value="Barsat East">Barsat East</option>
+                    <option value="Barsat West">Barsat West</option>
+                    <option value="Bitag Grande">Bitag Grande</option>
+                    <option value="Bitag Pequeño">Bitag Pequeño</option>
+                    <option value="Bunugan">Bunugan</option>
+                    <option value="C. Verzosa (Valley Cove)">C. Verzosa (Valley Cove)</option>
+                    <option value="Canagatan">Canagatan</option>
+                    <option value="Carupian">Carupian</option>
+                    <option value="Catugay">Catugay</option>
+                    <option value="Dabbac Grande">Dabbac Grande</option>
+                    <option value="Dalin">Dalin</option>
+                    <option value="Dalla">Dalla</option>
+                    <option value="Hacienda Intal">Hacienda Intal</option>
+                    <option value="Ibulo">Ibulo</option>
+                    <option value="Immurung">Immurung</option>
+                    <option value="J. Pallagao">J. Pallagao</option>
+                    <option value="Lasilat">Lasilat</option>
+                    <option value="Mabini">Mabini</option>
+                    <option value="Masical">Masical</option>
+                    <option value="Mocag">Mocag</option>
+                    <option value="Nangalinan">Nangalinan</option>
+                    <option value="Poblacion (Centro)">Poblacion (Centro)</option>
+                    <option value="Remus">Remus</option>
+                    <option value="San Antonio">San Antonio</option>
+                    <option value="San Francisco">San Francisco</option>
+                    <option value="San Isidro">San Isidro</option>
+                    <option value="San Jose">San Jose</option>
+                    <option value="San Miguel">San Miguel</option>
+                    <option value="San Vicente">San Vicente</option>
+                    <option value="Santa Margarita">Santa Margarita</option>
+                    <option value="Santor">Santor</option>
+                    <option value="Taguing">Taguing</option>
+                    <option value="Taguntungan">Taguntungan</option>
+                    <option value="Tallang">Tallang</option>
+                    <option value="Taytay">Taytay</option>
+                    <option value="Temblique">Temblique</option>
+                    <option value="Tungel">Tungel</option>
+                </select>
+            </div>
+
+            <button class="btn btn-next" onclick="startAssessment()" id="startBtn" disabled>
+                Start Assessment →
+            </button>
+
+            <div class="barangay-grid" id="barangayGrid"></div>
+
+            <div class="submit-section" id="submitSection" style="display: none;">
+                <h3>🎉 All Assessments Complete!</h3>
+                <p>Ready to submit your data to the coordinator.</p>
+                <button class="btn btn-submit" onclick="submitAllData()">
+                    📧 Submit All to Coordinator
+                </button>
+            </div>
+        </div>
+
+        <!-- Assessment Form (Hidden Initially) -->
+        <div class="content hidden" id="assessmentForm">
+            <!-- Step 0: Barangay Selection -->
+            <div class="step active" id="step0">
+                <div class="section-title">Select Barangay</div>
+                
+                <div class="form-group">
+                    <label for="barangaySelect">Barangay Name:</label>
+                    <select id="barangaySelect" onchange="updateBarangaySelection()">
+                        <option value="">-- Select Barangay --</option>
+                        <option value="Adaoag">Adaoag</option>
+                        <option value="Agaman (Proper)">Agaman (Proper)</option>
+                        <option value="Agaman Norte">Agaman Norte</option>
+                        <option value="Agaman Sur">Agaman Sur</option>
+                        <option value="Alba">Alba</option>
+                        <option value="Annayatan">Annayatan</option>
+                        <option value="Asassi">Asassi</option>
+                        <option value="Asinga-Via">Asinga-Via</option>
+                        <option value="Awallan">Awallan</option>
+                        <option value="Bacagan">Bacagan</option>
+                        <option value="Bagunot">Bagunot</option>
+                        <option value="Barsat East">Barsat East</option>
+                        <option value="Barsat West">Barsat West</option>
+                        <option value="Bitag Grande">Bitag Grande</option>
+                        <option value="Bitag Pequeño">Bitag Pequeño</option>
+                        <option value="Bunugan">Bunugan</option>
+                        <option value="C. Verzosa (Valley Cove)">C. Verzosa (Valley Cove)</option>
+                        <option value="Canagatan">Canagatan</option>
+                        <option value="Carupian">Carupian</option>
+                        <option value="Catugay">Catugay</option>
+                        <option value="Dabbac Grande">Dabbac Grande</option>
+                        <option value="Dalin">Dalin</option>
+                        <option value="Dalla">Dalla</option>
+                        <option value="Hacienda Intal">Hacienda Intal</option>
+                        <option value="Ibulo">Ibulo</option>
+                        <option value="Immurung">Immurung</option>
+                        <option value="J. Pallagao">J. Pallagao</option>
+                        <option value="Lasilat">Lasilat</option>
+                        <option value="Mabini">Mabini</option>
+                        <option value="Masical">Masical</option>
+                        <option value="Mocag">Mocag</option>
+                        <option value="Nangalinan">Nangalinan</option>
+                        <option value="Poblacion (Centro)">Poblacion (Centro)</option>
+                        <option value="Remus">Remus</option>
+                        <option value="San Antonio">San Antonio</option>
+                        <option value="San Francisco">San Francisco</option>
+                        <option value="San Isidro">San Isidro</option>
+                        <option value="San Jose">San Jose</option>
+                        <option value="San Miguel">San Miguel</option>
+                        <option value="San Vicente">San Vicente</option>
+                        <option value="Santa Margarita">Santa Margarita</option>
+                        <option value="Santor">Santor</option>
+                        <option value="Taguing">Taguing</option>
+                        <option value="Taguntungan">Taguntungan</option>
+                        <option value="Tallang">Tallang</option>
+                        <option value="Taytay">Taytay</option>
+                        <option value="Temblique">Temblique</option>
+                        <option value="Tungel">Tungel</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="assessmentDate">Date of Assessment:</label>
+                    <input type="date" id="assessmentDate">
+                </div>
+
+                <div class="alert alert-info">
+                    <strong>📋 Instructions:</strong><br>
+                    Select the barangay you are assessing and the date. All answers will be saved automatically as you progress through the form.
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-previous" onclick="backToDashboard()">← Dashboard</button>
+                    <button class="btn btn-next" onclick="nextStep()" id="step0Next" disabled>Next →</button>
+                </div>
+            </div>
+
+            <!-- Step 1: Establishment Part 1 (1.a) -->
+            <div class="step" id="step1">
+                <div class="section-title">1. Establishment</div>
+                
+                <div class="barangay-info">
+                    <strong>Barangay:</strong> <span id="barangay1"></span><br>
+                    <strong>Section Score:</strong> <span id="score1" style="font-size: 20px; color: #28A745;">0/20</span>
+                </div>
+
+                <div class="form-group">
+                    <label>1.a. The Barangay VAW Desk is established through: (5%)</label>
+                    <div class="radio-group">
+                        <div class="radio-option" onclick="selectRadio('q1a', 'ordinance', 5)">
+                            <input type="radio" name="q1a" value="ordinance" id="q1a_ordinance">
+                            <label for="q1a_ordinance">Barangay Ordinance</label>
+                            <span class="point-badge">5%</span>
+                        </div>
+                        <div class="radio-option" onclick="selectRadio('q1a', 'eo', 5)">
+                            <input type="radio" name="q1a" value="eo" id="q1a_eo">
+                            <label for="q1a_eo">Executive Order</label>
+                            <span class="point-badge">5%</span>
+                        </div>
+                        <div class="radio-option" onclick="selectRadio('q1a', 'both', 5)">
+                            <input type="radio" name="q1a" value="both" id="q1a_both">
+                            <label for="q1a_both">Both Ordinance & EO</label>
+                            <span class="point-badge">5%</span>
+                        </div>
+                        <div class="radio-option" onclick="selectRadio('q1a', 'none', 0)">
+                            <input type="radio" name="q1a" value="none" id="q1a_none">
+                            <label for="q1a_none">None</label>
+                            <span class="point-badge">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-previous" onclick="previousStep()">← Previous</button>
+                    <button class="btn btn-next" onclick="nextStep()">Next →</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Establishment Part 2 (1.b, 1.c, 1.d) -->
+            <div class="step" id="step2">
+                <div class="section-title">1. Establishment (continued)</div>
+                
+                <div class="barangay-info">
+                    <strong>Barangay:</strong> <span id="barangay2"></span><br>
+                    <strong>Section Score:</strong> <span id="score2" style="font-size: 20px; color: #28A745;">0/20</span>
+                </div>
+
+                <div class="form-group">
+                    <label>1.b. Barangay VAW Desk Person has attended: (5% total)</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option" onclick="toggleCheckbox('q1b_antivaw')">
+                            <input type="checkbox" id="q1b_antivaw" onchange="calculateScores()">
+                            <label for="q1b_antivaw">Orientation on Anti-VAW Laws (RA 9262, 9208, etc.)</label>
+                            <span class="point-badge">2%</span>
+                        </div>
+                        <div class="checkbox-option" onclick="toggleCheckbox('q1b_gender')">
+                            <input type="checkbox" id="q1b_gender" onchange="calculateScores()">
+                            <label for="q1b_gender">Gender-Sensitivity Training</label>
+                            <span class="point-badge">2%</span>
+                        </div>
+                        <div class="checkbox-option" onclick="toggleCheckbox('q1b_crisis')">
+                            <input type="checkbox" id="q1b_crisis" onchange="calculateScores()">
+                            <label for="q1b_crisis">Basic Crisis Intervention</label>
+                            <span class="point-badge">1%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>1.c. VAW Desk Location: (5%)</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option" onclick="toggleCheckbox('q1c_location')">
+                            <input type="checkbox" id="q1c_location" onchange="calculateScores()">
+                            <label for="q1c_location">Located within the barangay hall or near Punong Barangay office</label>
+                            <span class="point-badge">5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>1.d. Interview Room: (5%)</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option" onclick="toggleCheckbox('q1d_room')">
+                            <input type="checkbox" id="q1d_room" onchange="calculateScores()">
+                            <label for="q1d_room">Has a separate room or enclosed area for private interviews</label>
+                            <span class="point-badge">5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-previous" onclick="previousStep()">← Previous</button>
+                    <button class="btn btn-next" onclick="nextStep()">Next →</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Resources - Furniture & Equipment -->
+            <div class="step" id="step3">
+                <div class="section-title">2. Resources</div>
+                
+                <div class="barangay-info">
+                    <strong>Barangay:</strong> <span id="barangay3"></span><br>
+                    <strong>Section Score:</strong> <span id="score3" style="font-size: 20px; color: #28A745;">0/20</span>
+                </div>
+
+                <div class="form-group">
+                    <label>2.a. Furniture and Vehicle: (4% total)</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2a_table')">
+                            <input type="checkbox" id="q2a_table" onchange="calculateScores()">
+                            <label for="q2a_table">Table and chair</label>
+                            <span class="point-badge">1%</span>
+                        </div>
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2a_cabinet')">
+                            <input type="checkbox" id="q2a_cabinet" onchange="calculateScores()">
+                            <label for="q2a_cabinet">Filing cabinet/storage area</label>
+                            <span class="point-badge">1%</span>
+                        </div>
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2a_bed')">
+                            <input type="checkbox" id="q2a_bed" onchange="calculateScores()">
+                            <label for="q2a_bed">Sofa bed, folding bed, or mat</label>
+                            <span class="point-badge">1%</span>
+                        </div>
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2a_vehicle')">
+                            <input type="checkbox" id="q2a_vehicle" onchange="calculateScores()">
+                            <label for="q2a_vehicle">Availability of vehicle/transportation for victim-survivors</label>
+                            <span class="point-badge">1%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>2.b. Equipment and Supplies: (6% total)</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2b_phone')">
+                            <input type="checkbox" id="q2b_phone" onchange="calculateScores()">
+                            <label for="q2b_phone">Landline or mobile phone</label>
+                            <span class="point-badge">2%</span>
+                        </div>
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2b_computer')">
+                            <input type="checkbox" id="q2b_computer" onchange="calculateScores()">
+                            <label for="q2b_computer">Computer or typewriter for logging/monitoring</label>
+                            <span class="point-badge">1%</span>
+                        </div>
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2b_camera')">
+                            <input type="checkbox" id="q2b_camera" onchange="calculateScores()">
+                            <label for="q2b_camera">Camera for documenting physical evidence</label>
+                            <span class="point-badge">1%</span>
+                        </div>
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2b_recorder')">
+                            <input type="checkbox" id="q2b_recorder" onchange="calculateScores()">
+                            <label for="q2b_recorder">Tape or voice recorder for case narratives</label>
+                            <span class="point-badge">1%</span>
+                        </div>
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2b_firstaid')">
+                            <input type="checkbox" id="q2b_firstaid" onchange="calculateScores()">
+                            <label for="q2b_firstaid">First aid kit and other medicines</label>
+                            <span class="point-badge">1%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-previous" onclick="previousStep()">← Previous</button>
+                    <button class="btn btn-next" onclick="nextStep()">Next →</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Resources - Monitoring Tools & References -->
+            <div class="step" id="step4">
+                <div class="section-title">2. Resources (continued)</div>
+                
+                <div class="barangay-info">
+                    <strong>Barangay:</strong> <span id="barangay4"></span><br>
+                    <strong>Section Score:</strong> <span id="score4" style="font-size: 20px; color: #28A745;">0/20</span>
+                </div>
+
+                <div class="form-group">
+                    <label>2.c. Monitoring Tools: (5% total)</label>
+                    <div class="checkbox-group">
+                        <div style="margin-bottom: 15px; font-weight: 600; color: #333;">Logbooks:</div>
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2c_logbook1')">
+                            <input type="checkbox" id="q2c_logbook1" onchange="calculateScores()">
+                            <label for="q2c_logbook1">Logbook 1: for RA 9262 cases</label>
+                            <span class="point-badge">1.5%</span>
+                        </div>
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2c_logbook2')">
+                            <input type="checkbox" id="q2c_logbook2" onchange="calculateScores()">
+                            <label for="q2c_logbook2">Logbook 2: for other VAW related cases</label>
+                            <span class="point-badge">1.5%</span>
+                        </div>
+                        
+                        <div style="margin: 15px 0; font-weight: 600; color: #333;">Forms:</div>
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2c_intake')">
+                            <input type="checkbox" id="q2c_intake" onchange="calculateScores()">
+                            <label for="q2c_intake">VAW Docs Intake Form</label>
+                            <span class="point-badge">0.5%</span>
+                        </div>
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2c_referral')">
+                            <input type="checkbox" id="q2c_referral" onchange="calculateScores()">
+                            <label for="q2c_referral">Referral Form</label>
+                            <span class="point-badge">0.5%</span>
+                        </div>
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2c_feedback')">
+                            <input type="checkbox" id="q2c_feedback" onchange="calculateScores()">
+                            <label for="q2c_feedback">Feedback Form</label>
+                            <span class="point-badge">0.5%</span>
+                        </div>
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2c_bpo')">
+                            <input type="checkbox" id="q2c_bpo" onchange="calculateScores()">
+                            <label for="q2c_bpo">BPO Application Form</label>
+                            <span class="point-badge">0.5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>2.d. References: (5% total)</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2d_directory')">
+                            <input type="checkbox" id="q2d_directory" onchange="calculateScores()">
+                            <label for="q2d_directory">Directory of service providers</label>
+                            <span class="point-badge">2%</span>
+                        </div>
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2d_handbook')">
+                            <input type="checkbox" id="q2d_handbook" onchange="calculateScores()">
+                            <label for="q2d_handbook">VAW Desk Handbook</label>
+                            <span class="point-badge">1%</span>
+                        </div>
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2d_books')">
+                            <input type="checkbox" id="q2d_books" onchange="calculateScores()">
+                            <label for="q2d_books">VAW-related reference books, brochures</label>
+                            <span class="point-badge">1%</span>
+                        </div>
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2d_bpo_flow')">
+                            <input type="checkbox" id="q2d_bpo_flow" onchange="calculateScores()">
+                            <label for="q2d_bpo_flow">Flowchart on BPO issuance</label>
+                            <span class="point-badge">0.5%</span>
+                        </div>
+                        <div class="checkbox-option" onclick="toggleCheckbox('q2d_vaw_flow')">
+                            <input type="checkbox" id="q2d_vaw_flow" onchange="calculateScores()">
+                            <label for="q2d_vaw_flow">Flowchart on Handling of VAW Cases</label>
+                            <span class="point-badge">0.5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-previous" onclick="previousStep()">← Previous</button>
+                    <button class="btn btn-next" onclick="nextStep()">Next →</button>
+                </div>
+            </div>
+
+            <!-- Step 5: Policies, Plans, and Budget -->
+            <div class="step" id="step5">
+                <div class="section-title">3. Policies, Plans, and Budget</div>
+                
+                <div class="barangay-info">
+                    <strong>Barangay:</strong> <span id="barangay5"></span><br>
+                    <strong>Section Score:</strong> <span id="score5" style="font-size: 20px; color: #28A745;">0/20</span>
+                </div>
+
+                <div class="form-group">
+                    <label>3.a. Annual Investment Program (AIP): (5%)</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option" onclick="toggleCheckbox('q3a_aip')">
+                            <input type="checkbox" id="q3a_aip" onchange="calculateScores()">
+                            <label for="q3a_aip">Annual Investment Program (AIP) reflecting the approved Barangay GAD Plan and Budget</label>
+                            <span class="point-badge">5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>3.b. Certificate of Review: (5%)</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option" onclick="toggleCheckbox('q3b_cert')">
+                            <input type="checkbox" id="q3b_cert" onchange="calculateScores()">
+                            <label for="q3b_cert">Certificate of Review and endorsement of the 2024 GAD Plan and Budget</label>
+                            <span class="point-badge">5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>3.c. GAD Plan Programs: (5%)</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option" onclick="toggleCheckbox('q3c_gad')">
+                            <input type="checkbox" id="q3c_gad" onchange="calculateScores()">
+                            <label for="q3c_gad">Gender-responsive program and activities to address gender-based violence is indicated in the approved Barangay GAD Plan and Budget</label>
+                            <span class="point-badge">5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>3.d. BDP Programs: (5%)</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option" onclick="toggleCheckbox('q3d_bdp')">
+                            <input type="checkbox" id="q3d_bdp" onchange="calculateScores()">
+                            <label for="q3d_bdp">Gender-responsive program and activities to address gender-based violence is integrated in the Barangay Development Plan (BDP)</label>
+                            <span class="point-badge">5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-previous" onclick="previousStep()">← Previous</button>
+                    <button class="btn btn-next" onclick="nextStep()">Next →</button>
+                </div>
+            </div>
+
+            <!-- Step 6: Accomplishments -->
+            <div class="step" id="step6">
+                <div class="section-title">4. Accomplishments</div>
+                
+                <div class="barangay-info">
+                    <strong>Barangay:</strong> <span id="barangay6"></span><br>
+                    <strong>Section Score:</strong> <span id="score6" style="font-size: 20px; color: #28A745;">0/40</span>
+                </div>
+
+                <div class="form-group">
+                    <label>4.a. Annual Accomplishment Report: (10%)</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option" onclick="toggleCheckbox('q4a_annual')">
+                            <input type="checkbox" id="q4a_annual" onchange="calculateScores()">
+                            <label for="q4a_annual">Annual Accomplishment Report based on the approved Barangay GAD Plan and Budget</label>
+                            <span class="point-badge">10%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>4.b. Quarterly Accomplishment Reports: (10%)</label>
+                    <div class="radio-group">
+                        <div class="radio-option" onclick="selectRadio('q4b', '4', 10)">
+                            <input type="radio" name="q4b" value="4" id="q4b_4">
+                            <label for="q4b_4">4 quarterly accomplishment reports submitted (with received stamp)</label>
+                            <span class="point-badge">10%</span>
+                        </div>
+                        <div class="radio-option" onclick="selectRadio('q4b', '3', 7.5)">
+                            <input type="radio" name="q4b" value="3" id="q4b_3">
+                            <label for="q4b_3">3 quarterly accomplishment reports</label>
+                            <span class="point-badge">7.5%</span>
+                        </div>
+                        <div class="radio-option" onclick="selectRadio('q4b', '2', 5)">
+                            <input type="radio" name="q4b" value="2" id="q4b_2">
+                            <label for="q4b_2">2 quarterly accomplishment reports</label>
+                            <span class="point-badge">5%</span>
+                        </div>
+                        <div class="radio-option" onclick="selectRadio('q4b', '1', 2.5)">
+                            <input type="radio" name="q4b" value="1" id="q4b_1">
+                            <label for="q4b_1">1 quarterly accomplishment report</label>
+                            <span class="point-badge">2.5%</span>
+                        </div>
+                        <div class="radio-option" onclick="selectRadio('q4b', '0', 0)">
+                            <input type="radio" name="q4b" value="0" id="q4b_0">
+                            <label for="q4b_0">None</label>
+                            <span class="point-badge">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>4.c. Updated Database/Records: (10%)</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option" onclick="toggleCheckbox('q4c_database')">
+                            <input type="checkbox" id="q4c_database" onchange="calculateScores()">
+                            <label for="q4c_database">Updated database/records of all VAW cases reported in the barangay</label>
+                            <span class="point-badge">10%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>4.d. State of Barangay Address (SOBA) Inclusion: (10%)</label>
+                    <div class="radio-group">
+                        <div class="radio-option" onclick="selectRadio('q4d', '2', 10)">
+                            <input type="radio" name="q4d" value="2" id="q4d_2">
+                            <label for="q4d_2">Accomplishments of VAW Desk included in two (2) SOBA</label>
+                            <span class="point-badge">10%</span>
+                        </div>
+                        <div class="radio-option" onclick="selectRadio('q4d', '1', 5)">
+                            <input type="radio" name="q4d" value="1" id="q4d_1">
+                            <label for="q4d_1">Accomplishments of VAW Desk included in one (1) SOBA</label>
+                            <span class="point-badge">5%</span>
+                        </div>
+                        <div class="radio-option" onclick="selectRadio('q4d', '0', 0)">
+                            <input type="radio" name="q4d" value="0" id="q4d_0">
+                            <label for="q4d_0">Accomplishments of VAW Desk not included in SOBA</label>
+                            <span class="point-badge">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-previous" onclick="previousStep()">← Previous</button>
+                    <button class="btn btn-next" onclick="nextStep()">Review Summary →</button>
+                </div>
+            </div>
+
+            <!-- Step 7: Summary -->
+            <div class="step" id="step7">
+                <div class="section-title">Assessment Summary</div>
+                
+                <div class="alert alert-success">
+                    <strong>✅ Assessment Complete!</strong><br>
+                    Review your answers below before saving.
+                </div>
+
+                <div class="score-display">
+                    <div class="label">FINAL SCORE</div>
+                    <div class="big-score" id="finalScore">0</div>
+                    <div class="label">out of 100 points</div>
+                </div>
+
+                <div class="barangay-info">
+                    <strong>Barangay:</strong> <span id="barangay7"></span><br>
+                    <strong>Date Assessed:</strong> <span id="date7"></span><br>
+                    <strong>Assessed By:</strong> Richmond Rosete
+                </div>
+
+                <div class="summary-section">
+                    <h3>Section Breakdown</h3>
+                    <div class="summary-item">
+                        <span>1. Establishment</span>
+                        <strong><span id="summaryScore1">0</span>/20</strong>
+                    </div>
+                    <div class="summary-item">
+                        <span>2. Resources</span>
+                        <strong><span id="summaryScore2">0</span>/20</strong>
+                    </div>
+                    <div class="summary-item">
+                        <span>3. Policies, Plans, and Budget</span>
+                        <strong><span id="summaryScore3">0</span>/20</strong>
+                    </div>
+                    <div class="summary-item">
+                        <span>4. Accomplishments</span>
+                        <strong><span id="summaryScore4">0</span>/40</strong>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-previous" onclick="previousStep()">← Edit Answers</button>
+                    <button class="btn btn-submit" onclick="saveAssessment()">💾 Save Assessment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EmailJS Library (Latest Version) -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <script>
+        // Initialize EmailJS with new SDK
+        (function() {
+            emailjs.init({
+                publicKey: "zquhILJk68y45UqRw"
+            });
+        })();
+
+        // Barangays array (ALL 48 OFFICIAL BARANGAYS - CORRECTED)
+        const barangays = [
+            'Adaoag', 'Agaman (Proper)', 'Agaman Norte', 'Agaman Sur', 'Alba', 'Annayatan',
+            'Asassi', 'Asinga-Via', 'Awallan', 'Bacagan', 'Bagunot', 'Barsat East',
+            'Barsat West', 'Bitag Grande', 'Bitag Pequeño', 'Bunugan', 'C. Verzosa (Valley Cove)',
+            'Canagatan', 'Carupian', 'Catugay', 'Dabbac Grande', 'Dalin', 'Dalla',
+            'Hacienda Intal', 'Ibulo', 'Immurung', 'J. Pallagao', 'Lasilat', 'Mabini',
+            'Masical', 'Mocag', 'Nangalinan', 'Poblacion (Centro)', 'Remus', 'San Antonio',
+            'San Francisco', 'San Isidro', 'San Jose', 'San Miguel', 'San Vicente',
+            'Santa Margarita', 'Santor', 'Taguing', 'Taguntungan', 'Tallang', 'Taytay',
+            'Temblique', 'Tungel'
+        ];
+
+        // Application state
+        let currentStep = 0;
+        let currentBarangay = '';
+        let assessmentData = {};
+        let allAssessments = loadFromLocalStorage() || {};
+
+        // Initialize - Multiple methods for WebView compatibility
+        let initAttempts = 0;
+        let initInterval = null;
+
+        function initializeApp() {
+            initAttempts++;
+            console.log(`Initialization attempt #${initAttempts}`);
+
+            try {
+                // Barangays are hardcoded in HTML - just initialize app state
+                setTodayDate();
+                updateDashboard();
+
+                console.log('App initialized successfully!');
+
+                // Stop retrying
+                if (initInterval) {
+                    clearInterval(initInterval);
+                    initInterval = null;
+                }
+
+                return true;
+            } catch (error) {
+                console.error('Initialization error:', error);
+                return false;
+            }
+        }
+
+        // Try multiple initialization methods for Android WebView compatibility
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOMContentLoaded fired');
+            initializeApp();
+        });
+
+        window.addEventListener('load', function() {
+            console.log('Window load fired');
+            initializeApp();
+        });
+
+        // Aggressive retry with interval (for stubborn WebViews)
+        setTimeout(function() {
+            console.log('Starting aggressive retry interval');
+            initInterval = setInterval(function() {
+                const success = initializeApp();
+                if (success || initAttempts > 10) {
+                    clearInterval(initInterval);
+                    if (!success) {
+                        console.error('Failed to initialize after 10 attempts');
+                        alert('⚠️ INITIALIZATION ERROR\n\nBarangay dropdowns failed to load.\n\nPlease close and reopen the app.');
+                    }
+                }
+            }, 300);
+        }, 100);
+
+        function populateBarangayDropdowns() {
+            // Barangays are now hardcoded in HTML for better WebView compatibility
+            // This function is kept for compatibility but does nothing
+            console.log('Barangays are hardcoded in HTML - no dynamic population needed');
+        }
+
+        function setTodayDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('assessmentDate').value = today;
+        }
+
+        function updateDashboard() {
+            const completed = Object.keys(allAssessments).filter(b => allAssessments[b].status === 'completed').length;
+            document.getElementById('overallProgress').textContent = `${completed}/48`;
+            
+            // Show submit button if all complete
+            if (completed === 48) {
+                document.getElementById('submitSection').style.display = 'block';
+            }
+
+            // Populate grid (simplified for now)
+            const grid = document.getElementById('barangayGrid');
+            grid.innerHTML = '';
+            barangays.forEach(b => {
+                const card = document.createElement('div');
+                card.className = 'barangay-card';
+                const data = allAssessments[b];
+                if (data && data.status === 'completed') {
+                    card.classList.add('completed');
+                    const lockIcon = data.locked ? '🔒 ' : '';
+                    const lockStatus = data.locked ? ' (Locked)' : '';
+                    card.innerHTML = `
+                        <div class="name">${lockIcon}${b}</div>
+                        <div class="score">${data.totalScore.toFixed(1)}%</div>
+                        <div class="status">✓ Complete${lockStatus}</div>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        <div class="name">${b}</div>
+                        <div class="score">--</div>
+                        <div class="status">Not started</div>
+                    `;
+                }
+                card.onclick = () => {
+                    document.getElementById('dashboardBarangay').value = b;
+                    document.getElementById('startBtn').disabled = false;
+                };
+                grid.appendChild(card);
+            });
+        }
+
+        function startAssessment() {
+            const selected = document.getElementById('dashboardBarangay').value;
+            if (!selected) {
+                alert('Please select a barangay first');
+                return;
+            }
+
+            currentBarangay = selected;
+
+            // Remove any existing lock banner
+            const existingBanner = document.getElementById('lockBanner');
+            if (existingBanner) {
+                existingBanner.remove();
+            }
+
+            // ALWAYS reset form first to clear previous data
+            resetAllFormInputs();
+
+            // Enable all inputs first (in case we're switching from a locked assessment)
+            enableAllFormInputs();
+
+            // Load existing data if available
+            const existingData = allAssessments[currentBarangay];
+            if (existingData) {
+                loadAssessmentData(existingData);
+
+                // Check if assessment is locked
+                if (existingData.locked === true) {
+                    // Show locked banner
+                    showLockedBanner();
+
+                    // Disable all form inputs
+                    disableAllFormInputs();
+
+                    // Show alert
+                    alert(`🔒 LOCKED ASSESSMENT\n\nThis assessment for ${currentBarangay} has been saved and locked.\n\nYou can view the data but cannot make any changes.\n\nScore: ${existingData.totalScore.toFixed(1)}/100`);
+                }
+            } else {
+                initializeNewAssessment();
+            }
+
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('assessmentForm').classList.remove('hidden');
+
+            // Set barangay value and enable button AFTER form is visible
+            document.getElementById('barangaySelect').value = selected;
+
+            // Only enable Next button if not locked
+            if (!existingData || existingData.locked !== true) {
+                document.getElementById('step0Next').disabled = false;
+            }
+
+            updateBarangayLabels();
+            calculateScores();
+            updateProgress();
+        }
+
+        function showLockedBanner() {
+            // Create lock banner
+            const banner = document.createElement('div');
+            banner.id = 'lockBanner';
+            banner.style.cssText = 'background: #ff9800; color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 16px; border-radius: 8px; margin-bottom: 20px;';
+            banner.innerHTML = '🔒 THIS ASSESSMENT IS LOCKED - VIEW ONLY MODE (Cannot be modified)';
+
+            // Insert at top of assessment form
+            const assessmentForm = document.getElementById('assessmentForm');
+            assessmentForm.insertBefore(banner, assessmentForm.firstChild);
+        }
+
+        function backToDashboard() {
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('assessmentForm').classList.add('hidden');
+            currentStep = 0;
+            showStep(0);
+            updateDashboard();
+        }
+
+        function updateBarangaySelection() {
+            const selected = document.getElementById('barangaySelect').value;
+            // Only disable if truly empty, otherwise keep enabled
+            if (selected) {
+                document.getElementById('step0Next').disabled = false;
+            }
+        }
+
+        function showStep(n) {
+            const steps = document.querySelectorAll('.step');
+            steps.forEach((step, i) => {
+                step.classList.toggle('active', i === n);
+            });
+            updateProgress();
+
+            // If we're on step 0 and barangay is selected, ensure Next button is enabled
+            if (n === 0 && document.getElementById('barangaySelect').value) {
+                document.getElementById('step0Next').disabled = false;
+            }
+        }
+
+        function nextStep() {
+            if (currentStep === 0) {
+                const barangay = document.getElementById('barangaySelect').value;
+                if (!barangay) {
+                    alert('Please select a barangay');
+                    return;
+                }
+                currentBarangay = barangay;
+                updateBarangayLabels();
+                
+                if (allAssessments[currentBarangay]) {
+                    loadAssessmentData(allAssessments[currentBarangay]);
+                } else {
+                    initializeNewAssessment();
+                }
+            }
+            
+            if (currentStep < 7) {
+                currentStep++;
+                showStep(currentStep);
+                calculateScores();
+                saveToLocalStorage();
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        }
+
+        function updateProgress() {
+            const percent = (currentStep / 7) * 100;
+            document.getElementById('progressFill').style.width = percent + '%';
+            document.getElementById('progressText').textContent = `Step ${currentStep} of 7`;
+        }
+
+        function updateBarangayLabels() {
+            for (let i = 1; i <= 7; i++) {
+                const elem = document.getElementById('barangay' + i);
+                if (elem) elem.textContent = currentBarangay;
+            }
+            const dateElem = document.getElementById('date7');
+            if (dateElem) dateElem.textContent = document.getElementById('assessmentDate').value;
+        }
+
+        function initializeNewAssessment() {
+            assessmentData = {
+                barangay: currentBarangay,
+                date: document.getElementById('assessmentDate').value,
+                assessor: 'Richmond Rosete',
+                status: 'in-progress',
+                section1: {},
+                section2: {},
+                section3: {},
+                section4: {},
+                totalScore: 0
+            };
+            // Note: Form reset now happens in startAssessment() before this is called
+        }
+
+        function resetAllFormInputs() {
+            // Uncheck all radio buttons
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.checked = false;
+                radio.parentElement.classList.remove('selected');
+            });
+
+            // Uncheck all checkboxes
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.parentElement.classList.remove('checked');
+            });
+
+            // Reset scores to 0
+            calculateScores();
+        }
+
+        function disableAllFormInputs() {
+            // Disable all radio buttons and checkboxes
+            document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+                input.disabled = true;
+                input.style.cursor = 'not-allowed';
+                input.style.pointerEvents = 'none'; // Completely block clicking
+
+                // Add event listener to prevent any interaction
+                input.onclick = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                };
+
+                // Also disable the parent label
+                if (input.parentElement) {
+                    input.parentElement.style.cursor = 'not-allowed';
+                    input.parentElement.style.pointerEvents = 'none';
+                    input.parentElement.style.opacity = '0.6'; // Make it look disabled
+                    input.parentElement.onclick = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                    };
+                }
+            });
+
+            // Disable date input
+            const dateInput = document.getElementById('assessmentDate');
+            if (dateInput) {
+                dateInput.disabled = true;
+                dateInput.style.pointerEvents = 'none';
+            }
+
+            // Disable barangay select
+            const barangaySelect = document.getElementById('barangaySelect');
+            if (barangaySelect) {
+                barangaySelect.disabled = true;
+                barangaySelect.style.cursor = 'not-allowed';
+                barangaySelect.style.pointerEvents = 'none';
+            }
+
+            // Keep navigation buttons ENABLED so user can browse through steps
+            // (they just can't edit anything)
+
+            // Hide Save button, replace with View Only message
+            const saveBtn = document.querySelector('.btn-submit');
+            if (saveBtn) {
+                saveBtn.style.display = 'none';
+            }
+
+            // Add a "VIEW ONLY" replacement button
+            const previousBtn = document.querySelector('.btn-previous');
+            if (previousBtn && !document.getElementById('viewOnlyBtn')) {
+                const viewOnlyBtn = document.createElement('button');
+                viewOnlyBtn.id = 'viewOnlyBtn';
+                viewOnlyBtn.className = 'btn';
+                viewOnlyBtn.style.cssText = 'background: #6c757d; color: white; cursor: default;';
+                viewOnlyBtn.textContent = '🔒 VIEW ONLY - Cannot Save Changes';
+                viewOnlyBtn.onclick = () => {
+                    alert('This assessment is locked and cannot be modified.\n\nYou can browse through the steps to view the data.');
+                };
+                previousBtn.parentElement.appendChild(viewOnlyBtn);
+            }
+        }
+
+        function enableAllFormInputs() {
+            // Enable all radio buttons and checkboxes
+            document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+                input.disabled = false;
+                input.style.cursor = 'pointer';
+                input.style.pointerEvents = 'auto'; // Re-enable clicking
+                input.onclick = null; // Remove blocking event listener
+
+                // Re-enable the parent label
+                if (input.parentElement) {
+                    input.parentElement.style.cursor = 'pointer';
+                    input.parentElement.style.pointerEvents = 'auto';
+                    input.parentElement.style.opacity = '1'; // Restore full opacity
+                    input.parentElement.onclick = null;
+                }
+            });
+
+            // Enable date input
+            const dateInput = document.getElementById('assessmentDate');
+            if (dateInput) {
+                dateInput.disabled = false;
+                dateInput.style.pointerEvents = 'auto';
+            }
+
+            // Enable barangay select
+            const barangaySelect = document.getElementById('barangaySelect');
+            if (barangaySelect) {
+                barangaySelect.disabled = false;
+                barangaySelect.style.cursor = 'pointer';
+                barangaySelect.style.pointerEvents = 'auto';
+            }
+
+            // Enable all navigation buttons
+            document.querySelectorAll('.btn-next, .btn-previous').forEach(btn => {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+            });
+
+            // Show Save button
+            const saveBtn = document.querySelector('.btn-submit');
+            if (saveBtn) {
+                saveBtn.style.display = '';
+            }
+
+            // Remove VIEW ONLY button if it exists
+            const viewOnlyBtn = document.getElementById('viewOnlyBtn');
+            if (viewOnlyBtn) {
+                viewOnlyBtn.remove();
+            }
+        }
+
+        function selectRadio(name, value, points) {
+            // Prevent changes if assessment is locked
+            if (allAssessments[currentBarangay]?.locked === true) {
+                return;
+            }
+
+            document.getElementById(name + '_' + value).checked = true;
+
+            // Update visual selection
+            document.querySelectorAll(`input[name="${name}"]`).forEach(radio => {
+                radio.parentElement.classList.toggle('selected', radio.checked);
+            });
+
+            calculateScores();
+        }
+
+        function toggleCheckbox(id) {
+            // Prevent changes if assessment is locked
+            if (allAssessments[currentBarangay]?.locked === true) {
+                return;
+            }
+
+            const checkbox = document.getElementById(id);
+            checkbox.checked = !checkbox.checked;
+            checkbox.parentElement.classList.toggle('checked', checkbox.checked);
+            calculateScores();
+        }
+
+        function calculateScores() {
+            let section1 = 0, section2 = 0, section3 = 0, section4 = 0;
+            
+            // Section 1: Establishment (20%)
+            const q1a = document.querySelector('input[name="q1a"]:checked');
+            if (q1a && q1a.value !== 'none') section1 += 5;
+            
+            if (document.getElementById('q1b_antivaw')?.checked) section1 += 2;
+            if (document.getElementById('q1b_gender')?.checked) section1 += 2;
+            if (document.getElementById('q1b_crisis')?.checked) section1 += 1;
+            if (document.getElementById('q1c_location')?.checked) section1 += 5;
+            if (document.getElementById('q1d_room')?.checked) section1 += 5;
+            
+            // Section 2: Resources (20%)
+            if (document.getElementById('q2a_table')?.checked) section2 += 1;
+            if (document.getElementById('q2a_cabinet')?.checked) section2 += 1;
+            if (document.getElementById('q2a_bed')?.checked) section2 += 1;
+            if (document.getElementById('q2a_vehicle')?.checked) section2 += 1;
+            
+            if (document.getElementById('q2b_phone')?.checked) section2 += 2;
+            if (document.getElementById('q2b_computer')?.checked) section2 += 1;
+            if (document.getElementById('q2b_camera')?.checked) section2 += 1;
+            if (document.getElementById('q2b_recorder')?.checked) section2 += 1;
+            if (document.getElementById('q2b_firstaid')?.checked) section2 += 1;
+            
+            if (document.getElementById('q2c_logbook1')?.checked) section2 += 1.5;
+            if (document.getElementById('q2c_logbook2')?.checked) section2 += 1.5;
+            if (document.getElementById('q2c_intake')?.checked) section2 += 0.5;
+            if (document.getElementById('q2c_referral')?.checked) section2 += 0.5;
+            if (document.getElementById('q2c_feedback')?.checked) section2 += 0.5;
+            if (document.getElementById('q2c_bpo')?.checked) section2 += 0.5;
+            
+            if (document.getElementById('q2d_directory')?.checked) section2 += 2;
+            if (document.getElementById('q2d_handbook')?.checked) section2 += 1;
+            if (document.getElementById('q2d_books')?.checked) section2 += 1;
+            if (document.getElementById('q2d_bpo_flow')?.checked) section2 += 0.5;
+            if (document.getElementById('q2d_vaw_flow')?.checked) section2 += 0.5;
+            
+            // Section 3: Policies (20%)
+            if (document.getElementById('q3a_aip')?.checked) section3 += 5;
+            if (document.getElementById('q3b_cert')?.checked) section3 += 5;
+            if (document.getElementById('q3c_gad')?.checked) section3 += 5;
+            if (document.getElementById('q3d_bdp')?.checked) section3 += 5;
+            
+            // Section 4: Accomplishments (40%)
+            if (document.getElementById('q4a_annual')?.checked) section4 += 10;
+            
+            const q4b = document.querySelector('input[name="q4b"]:checked');
+            if (q4b) {
+                const val = parseFloat(q4b.value);
+                section4 += val === 4 ? 10 : val === 3 ? 7.5 : val === 2 ? 5 : val === 1 ? 2.5 : 0;
+            }
+            
+            if (document.getElementById('q4c_database')?.checked) section4 += 10;
+            
+            const q4d = document.querySelector('input[name="q4d"]:checked');
+            if (q4d) {
+                const val = parseFloat(q4d.value);
+                section4 += val === 2 ? 10 : val === 1 ? 5 : 0;
+            }
+            
+            // Update displays
+            const total = section1 + section2 + section3 + section4;
+            
+            document.getElementById('score1').textContent = `${section1}/20`;
+            document.getElementById('score2').textContent = `${section1}/20`;
+            document.getElementById('score3').textContent = `${section2}/20`;
+            document.getElementById('score4').textContent = `${section2}/20`;
+            document.getElementById('score5').textContent = `${section3}/20`;
+            document.getElementById('score6').textContent = `${section4}/40`;
+            
+            document.getElementById('finalScore').textContent = total.toFixed(1);
+            document.getElementById('summaryScore1').textContent = section1.toFixed(1);
+            document.getElementById('summaryScore2').textContent = section2.toFixed(1);
+            document.getElementById('summaryScore3').textContent = section3.toFixed(1);
+            document.getElementById('summaryScore4').textContent = section4.toFixed(1);
+            
+            // Save to assessment data
+            if (assessmentData) {
+                assessmentData.section1Score = section1;
+                assessmentData.section2Score = section2;
+                assessmentData.section3Score = section3;
+                assessmentData.section4Score = section4;
+                assessmentData.totalScore = total;
+            }
+        }
+
+        function saveAssessment() {
+            if (!currentBarangay) {
+                alert('No barangay selected');
+                return;
+            }
+
+            // Check if already locked
+            if (allAssessments[currentBarangay]?.locked === true) {
+                alert('⚠️ This assessment is LOCKED and cannot be modified.\n\nOnce an assessment is saved, it cannot be changed.');
+                return;
+            }
+
+            // Show confirmation dialog
+            const confirmMsg = `⚠️ IMPORTANT CONFIRMATION\n\n` +
+                `You are about to save the assessment for ${currentBarangay}.\n\n` +
+                `Score: ${assessmentData.totalScore.toFixed(1)}/100\n\n` +
+                `⚠️ PLEASE NOTE:\n` +
+                `• Once saved, this assessment will be LOCKED\n` +
+                `• You will NOT be able to modify it anymore\n` +
+                `• Make sure all your answers are correct\n\n` +
+                `Do you want to proceed with saving?`;
+
+            if (!confirm(confirmMsg)) {
+                return; // User cancelled
+            }
+
+            // Collect ALL form answers
+            const formData = {
+                barangay: currentBarangay,
+                date: document.getElementById('assessmentDate').value,
+                assessor: 'Richmond Rosete',
+                status: 'completed',
+                locked: true, // Mark as locked
+                completedDate: new Date().toISOString(),
+
+                // Save actual form values
+                answers: {
+                    q1a: document.querySelector('input[name="q1a"]:checked')?.value || null,
+                    q1b_antivaw: document.getElementById('q1b_antivaw')?.checked || false,
+                    q1b_gender: document.getElementById('q1b_gender')?.checked || false,
+                    q1b_crisis: document.getElementById('q1b_crisis')?.checked || false,
+                    q1c_location: document.getElementById('q1c_location')?.checked || false,
+                    q1d_room: document.getElementById('q1d_room')?.checked || false,
+
+                    q2a_table: document.getElementById('q2a_table')?.checked || false,
+                    q2a_cabinet: document.getElementById('q2a_cabinet')?.checked || false,
+                    q2a_bed: document.getElementById('q2a_bed')?.checked || false,
+                    q2a_vehicle: document.getElementById('q2a_vehicle')?.checked || false,
+
+                    q2b_phone: document.getElementById('q2b_phone')?.checked || false,
+                    q2b_computer: document.getElementById('q2b_computer')?.checked || false,
+                    q2b_camera: document.getElementById('q2b_camera')?.checked || false,
+                    q2b_recorder: document.getElementById('q2b_recorder')?.checked || false,
+                    q2b_firstaid: document.getElementById('q2b_firstaid')?.checked || false,
+
+                    q2c_logbook1: document.getElementById('q2c_logbook1')?.checked || false,
+                    q2c_logbook2: document.getElementById('q2c_logbook2')?.checked || false,
+                    q2c_intake: document.getElementById('q2c_intake')?.checked || false,
+                    q2c_referral: document.getElementById('q2c_referral')?.checked || false,
+                    q2c_feedback: document.getElementById('q2c_feedback')?.checked || false,
+                    q2c_bpo: document.getElementById('q2c_bpo')?.checked || false,
+
+                    q2d_directory: document.getElementById('q2d_directory')?.checked || false,
+                    q2d_handbook: document.getElementById('q2d_handbook')?.checked || false,
+                    q2d_books: document.getElementById('q2d_books')?.checked || false,
+                    q2d_bpo_flow: document.getElementById('q2d_bpo_flow')?.checked || false,
+                    q2d_vaw_flow: document.getElementById('q2d_vaw_flow')?.checked || false,
+
+                    q3a_aip: document.getElementById('q3a_aip')?.checked || false,
+                    q3b_cert: document.getElementById('q3b_cert')?.checked || false,
+                    q3c_gad: document.getElementById('q3c_gad')?.checked || false,
+                    q3d_bdp: document.getElementById('q3d_bdp')?.checked || false,
+
+                    q4a_annual: document.getElementById('q4a_annual')?.checked || false,
+                    q4b: document.querySelector('input[name="q4b"]:checked')?.value || null,
+                    q4c_database: document.getElementById('q4c_database')?.checked || false,
+                    q4d: document.querySelector('input[name="q4d"]:checked')?.value || null
+                },
+
+                // Save scores
+                section1Score: assessmentData.section1Score,
+                section2Score: assessmentData.section2Score,
+                section3Score: assessmentData.section3Score,
+                section4Score: assessmentData.section4Score,
+                totalScore: assessmentData.totalScore
+            };
+
+            // Save to all assessments
+            allAssessments[currentBarangay] = formData;
+
+            // Save to localStorage
+            saveToLocalStorage();
+
+            // AUTO-BACKUP: Download individual barangay JSON
+            setTimeout(() => {
+                downloadIndividualBarangay(formData);
+            }, 100);
+
+            // AUTO-BACKUP: Download consolidated progress JSON
+            setTimeout(() => {
+                downloadConsolidatedProgress();
+            }, 500);
+
+            const completedCount = Object.keys(allAssessments).filter(b => allAssessments[b].status === 'completed').length;
+
+            alert(`✅ Assessment for ${currentBarangay} saved and LOCKED!\n\nScore: ${formData.totalScore.toFixed(1)}/100\n\n🔒 This assessment is now locked and cannot be modified.\n\n💾 AUTO-BACKUP:\n✓ Individual file downloaded: ${currentBarangay}\n✓ Progress file downloaded: ${completedCount}/48 barangays`);
+
+            backToDashboard();
+        }
+
+        function saveToLocalStorage() {
+            try {
+                const jsonString = JSON.stringify(allAssessments);
+
+                // Validate before saving
+                if (!jsonString || jsonString === '{}') {
+                    console.warn('Attempting to save empty data');
+                }
+
+                localStorage.setItem('vaw_assessments', jsonString);
+            } catch (error) {
+                console.error('Error saving to localStorage:', error);
+
+                // Check if quota exceeded
+                if (error.name === 'QuotaExceededError') {
+                    alert('⚠️ STORAGE FULL\n\nYour device storage is full.\n\n✅ SOLUTIONS:\n• Your auto-backups are safe in Downloads\n• Clear browser data to free space\n• Continue using - backups are automatic');
+                } else {
+                    alert('⚠️ SAVE ERROR\n\nCould not save to device storage.\n\n✅ DON\'T WORRY:\n• Auto-backup files were downloaded\n• Data is safe in your Downloads folder\n• You can continue working');
+                }
+            }
+        }
+
+        function loadFromLocalStorage() {
+            try {
+                const data = localStorage.getItem('vaw_assessments');
+                if (!data) return {};
+
+                const parsed = JSON.parse(data);
+
+                // Validate structure
+                if (typeof parsed !== 'object' || parsed === null) {
+                    throw new Error('Invalid data structure');
+                }
+
+                return parsed;
+            } catch (error) {
+                console.error('Error loading localStorage:', error);
+
+                // Attempt to backup corrupted data
+                const corruptedData = localStorage.getItem('vaw_assessments');
+                if (corruptedData) {
+                    // Save corrupted data for recovery
+                    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+                    try {
+                        const blob = new Blob([corruptedData], { type: 'text/plain' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `CORRUPTED_BACKUP_${timestamp}.txt`;
+                        a.click();
+                    } catch (e) {
+                        console.error('Could not save backup:', e);
+                    }
+                }
+
+                alert('⚠️ DATA CORRUPTION DETECTED\n\nYour saved assessments may be corrupted.\n\n✅ RECOVERY ACTIONS:\n• A backup file has been downloaded\n• Please send this file to your coordinator\n• You can restore from your JSON backups\n\nThe app will now start fresh.');
+
+                // Clear corrupted data
+                localStorage.removeItem('vaw_assessments');
+                return {};
+            }
+        }
+
+        function loadAssessmentData(data) {
+            assessmentData = data;
+
+            // Restore ALL form values from saved data
+            if (data.answers) {
+                const answers = data.answers;
+
+                // Restore radio buttons
+                if (answers.q1a) {
+                    const radio = document.getElementById('q1a_' + answers.q1a);
+                    if (radio) {
+                        radio.checked = true;
+                        radio.parentElement.classList.add('selected');
+                    }
+                }
+
+                // Restore checkboxes - Section 1
+                if (answers.q1b_antivaw) document.getElementById('q1b_antivaw').checked = true;
+                if (answers.q1b_gender) document.getElementById('q1b_gender').checked = true;
+                if (answers.q1b_crisis) document.getElementById('q1b_crisis').checked = true;
+                if (answers.q1c_location) document.getElementById('q1c_location').checked = true;
+                if (answers.q1d_room) document.getElementById('q1d_room').checked = true;
+
+                // Section 2a
+                if (answers.q2a_table) document.getElementById('q2a_table').checked = true;
+                if (answers.q2a_cabinet) document.getElementById('q2a_cabinet').checked = true;
+                if (answers.q2a_bed) document.getElementById('q2a_bed').checked = true;
+                if (answers.q2a_vehicle) document.getElementById('q2a_vehicle').checked = true;
+
+                // Section 2b
+                if (answers.q2b_phone) document.getElementById('q2b_phone').checked = true;
+                if (answers.q2b_computer) document.getElementById('q2b_computer').checked = true;
+                if (answers.q2b_camera) document.getElementById('q2b_camera').checked = true;
+                if (answers.q2b_recorder) document.getElementById('q2b_recorder').checked = true;
+                if (answers.q2b_firstaid) document.getElementById('q2b_firstaid').checked = true;
+
+                // Section 2c
+                if (answers.q2c_logbook1) document.getElementById('q2c_logbook1').checked = true;
+                if (answers.q2c_logbook2) document.getElementById('q2c_logbook2').checked = true;
+                if (answers.q2c_intake) document.getElementById('q2c_intake').checked = true;
+                if (answers.q2c_referral) document.getElementById('q2c_referral').checked = true;
+                if (answers.q2c_feedback) document.getElementById('q2c_feedback').checked = true;
+                if (answers.q2c_bpo) document.getElementById('q2c_bpo').checked = true;
+
+                // Section 2d
+                if (answers.q2d_directory) document.getElementById('q2d_directory').checked = true;
+                if (answers.q2d_handbook) document.getElementById('q2d_handbook').checked = true;
+                if (answers.q2d_books) document.getElementById('q2d_books').checked = true;
+                if (answers.q2d_bpo_flow) document.getElementById('q2d_bpo_flow').checked = true;
+                if (answers.q2d_vaw_flow) document.getElementById('q2d_vaw_flow').checked = true;
+
+                // Section 3
+                if (answers.q3a_aip) document.getElementById('q3a_aip').checked = true;
+                if (answers.q3b_cert) document.getElementById('q3b_cert').checked = true;
+                if (answers.q3c_gad) document.getElementById('q3c_gad').checked = true;
+                if (answers.q3d_bdp) document.getElementById('q3d_bdp').checked = true;
+
+                // Section 4
+                if (answers.q4a_annual) document.getElementById('q4a_annual').checked = true;
+
+                if (answers.q4b) {
+                    const radio = document.getElementById('q4b_' + answers.q4b);
+                    if (radio) {
+                        radio.checked = true;
+                        radio.parentElement.classList.add('selected');
+                    }
+                }
+
+                if (answers.q4c_database) document.getElementById('q4c_database').checked = true;
+
+                if (answers.q4d) {
+                    const radio = document.getElementById('q4d_' + answers.q4d);
+                    if (radio) {
+                        radio.checked = true;
+                        radio.parentElement.classList.add('selected');
+                    }
+                }
+
+                // Update visual state for all checkboxes
+                document.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+                    cb.parentElement.classList.add('checked');
+                });
+            }
+
+            calculateScores();
+        }
+
+        function submitAllData() {
+            const completed = Object.keys(allAssessments).filter(b => allAssessments[b].status === 'completed').length;
+
+            if (completed < 48) {
+                alert(`You have only completed ${completed}/48 assessments.\n\nPlease complete all barangays before submitting.`);
+                return;
+            }
+
+            const confirmed = confirm(`Submit all 48 assessments to Coordinator?\n\nThis will send an email notification to:\nrichmondrosete19@gmail.com`);
+
+            if (!confirmed) return;
+
+            // Create JSON export
+            const exportData = {
+                assessor: 'Richmond Rosete',
+                position: 'Job Order',
+                municipality: 'Baggao, Cagayan',
+                exportDate: new Date().toISOString(),
+                totalAssessments: 48,
+                completedAssessments: completed,
+                assessments: allAssessments
+            };
+
+            // Show loading
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'loadingOverlay';
+            loadingDiv.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 9999;">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <div style="color: white; margin-top: 20px;">Sending notification email...</div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(loadingDiv);
+
+            // Send email via EmailJS
+            const templateParams = {
+                name: 'Richmond Rosete',
+                submission_date: new Date().toLocaleString(),
+                to_email: 'richmondrosete19@gmail.com'
+            };
+
+            emailjs.send('service_ca84be8', 'template_exlk9ur', templateParams)
+                .then(function(response) {
+                    console.log('Email sent successfully!', response.status, response.text);
+
+                    // Download JSON as backup
+                    downloadJSON(exportData);
+
+                    // Remove loading
+                    document.getElementById('loadingOverlay').remove();
+
+                    alert('✅ Success!\n\n✓ Email notification sent to coordinator\n✓ JSON file downloaded as backup\n\nYour assessment submission is complete!');
+                    location.reload();
+                }, function(error) {
+                    console.error('Email failed to send:', error);
+
+                    // Still download JSON if email fails
+                    downloadJSON(exportData);
+
+                    // Remove loading
+                    document.getElementById('loadingOverlay').remove();
+
+                    alert('⚠️ Email notification failed to send.\n\nBut don\'t worry!\nJSON file has been downloaded to your device.\n\nPlease manually email this file to:\nrichmondrosete19@gmail.com');
+                    location.reload();
+                });
+        }
+
+        function downloadJSON(data) {
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `VAW_Assessment_RichmondRosete_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+
+        function downloadIndividualBarangay(barangayData) {
+            const json = JSON.stringify(barangayData, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+
+            // Clean barangay name for filename (remove special chars)
+            const cleanName = barangayData.barangay.replace(/[^a-zA-Z0-9]/g, '_');
+            const dateStr = new Date().toISOString().split('T')[0];
+
+            a.download = `${cleanName}_${dateStr}.json`;
+            a.click();
+        }
+
+        function downloadConsolidatedProgress() {
+            const completed = Object.keys(allAssessments).filter(b =>
+                allAssessments[b].status === 'completed'
+            );
+
+            const progressData = {
+                assessor: 'Richmond Rosete',
+                position: 'Job Order',
+                municipality: 'Baggao, Cagayan',
+                exportDate: new Date().toISOString(),
+                progress: `${completed.length}/48`,
+                totalAssessments: 48,
+                completedAssessments: completed.length,
+                pendingAssessments: 48 - completed.length,
+                completedBarangays: completed,
+                assessments: allAssessments
+            };
+
+            const json = JSON.stringify(progressData, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+
+            const dateStr = new Date().toISOString().split('T')[0];
+            a.download = `RichmondRosete_Progress_${completed.length}of48_${dateStr}.json`;
+            a.click();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAW Assessment - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #E6E6FA 0%, #F0E6FF 50%, #E6E6FA 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Animated Background Circles */
+        .bg-circle {
+            position: fixed;
+            border-radius: 50%;
+            background: rgba(138, 43, 226, 0.05);
+            animation: float 20s infinite ease-in-out;
+            pointer-events: none;
+        }
+
+        .bg-circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .bg-circle:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            bottom: -150px;
+            right: -150px;
+            animation-delay: 7s;
+        }
+
+        .bg-circle:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            top: 50%;
+            right: 10%;
+            animation-delay: 14s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(20px, -20px) scale(1.05); }
+            66% { transform: translate(-15px, 15px) scale(0.95); }
+        }
+
+        /* Animation Container */
+        .animation-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            background: linear-gradient(135deg, #E6E6FA 0%, #F0E6FF 50%, #E6E6FA 100%);
+            animation: fadeOut 0.8s ease 3.2s forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+
+        /* Main Title Animation */
+        .main-title {
+            text-align: center;
+            opacity: 0;
+            animation: zoomIn 1.2s ease 0s forwards;
+        }
+
+        .main-title h1 {
+            font-size: 80px;
+            font-weight: 900;
+            color: #8B5CF6;
+            text-shadow: 0 10px 40px rgba(139, 92, 246, 0.4);
+            margin: 0;
+            line-height: 1;
+            letter-spacing: 2px;
+        }
+
+        @keyframes zoomIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) rotate(-5deg);
+            }
+            70% {
+                transform: scale(1.05) rotate(0deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        /* Subtitle Text Animation */
+        .subtitle {
+            position: absolute;
+            font-size: 20px;
+            font-weight: 600;
+            color: #7C3AED;
+            opacity: 0;
+            animation: fadeInSubtitle 1s ease 1.5s forwards;
+            margin-top: 100px;
+            text-align: center;
+        }
+
+        .subtitle-location {
+            position: absolute;
+            font-size: 16px;
+            font-weight: 500;
+            color: #8B5CF6;
+            opacity: 0;
+            animation: fadeInLocation 1s ease 2s forwards;
+            margin-top: 140px;
+            text-align: center;
+        }
+
+        @keyframes fadeInSubtitle {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLocation {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Login Container */
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.2);
+            padding: 30px 35px;
+            max-width: 450px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            opacity: 0;
+            animation: fadeInLogin 1s ease 3.7s forwards;
+            position: relative;
+            z-index: 10;
+            scrollbar-width: thin;
+            scrollbar-color: #DDD6FE #F9FAFB;
+        }
+
+        .login-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .login-container::-webkit-scrollbar-track {
+            background: #F9FAFB;
+            border-radius: 10px;
+        }
+
+        .login-container::-webkit-scrollbar-thumb {
+            background: #DDD6FE;
+            border-radius: 10px;
+        }
+
+        .login-container::-webkit-scrollbar-thumb:hover {
+            background: #C4B5FD;
+        }
+
+        @keyframes fadeInLogin {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .login-header h1 {
+            font-size: 24px;
+            color: #7C3AED;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .login-header p {
+            font-size: 14px;
+            color: #8B5CF6;
+            font-weight: 500;
+        }
+
+        .login-form {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #4C1D95;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        /* PIN Input Boxes Container */
+        .pin-boxes {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .pin-box {
+            width: 55px;
+            height: 55px;
+            border: 2px solid #DDD6FE;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #7C3AED;
+            outline: none;
+            transition: all 0.3s ease;
+            background: #F9FAFB;
+        }
+
+        .pin-box:focus {
+            border-color: #8B5CF6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+            background: white;
+        }
+
+        .pin-box:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+            margin-top: 5px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: #FEE2E2;
+            color: #DC2626;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #8B5CF6;
+        }
+
+        .rater-count {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 11px;
+            color: #A78BFA;
+        }
+
+        /* Developer Badge */
+        .developer-badge {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #E9D5FF;
+        }
+
+        .badge-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .badge-chip:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+        }
+
+        .badge-icon {
+            width: 16px;
+            height: 16px;
+            background: white;
+            color: #8B5CF6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #DDD6FE;
+            border-top: 3px solid #8B5CF6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 10px;
+            color: #8B5CF6;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: #D1FAE5;
+            color: #059669;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .login-container {
+                padding: 25px 20px;
+            }
+
+            .login-header h1 {
+                font-size: 20px;
+            }
+
+            .login-header p {
+                font-size: 13px;
+            }
+
+            .main-title h1 {
+                font-size: 60px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+                margin-top: 80px;
+            }
+
+            .subtitle-location {
+                font-size: 14px;
+                margin-top: 110px;
+            }
+
+            .pin-box {
+                width: 50px;
+                height: 50px;
+                font-size: 22px;
+            }
+
+            .pin-boxes {
+                gap: 8px;
+            }
+
+            .login-btn {
+                padding: 12px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-height: 700px) {
+            .login-container {
+                padding: 20px 30px;
+            }
+
+            .login-header {
+                margin-bottom: 15px;
+            }
+
+            .login-header h1 {
+                font-size: 20px;
+            }
+
+            .pin-box {
+                width: 50px;
+                height: 50px;
+                font-size: 22px;
+            }
+
+            .footer-text {
+                margin-top: 15px;
+                font-size: 11px;
+            }
+
+            .rater-count {
+                margin-top: 8px;
+            }
+
+            .developer-badge {
+                margin-top: 12px;
+                padding-top: 10px;
+            }
+
+            .badge-chip {
+                font-size: 10px;
+                padding: 6px 12px;
+            }
+
+            .badge-icon {
+                width: 14px;
+                height: 14px;
+                font-size: 9px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Circles -->
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+
+    <!-- Opening Animation -->
+    <div class="animation-container">
+        <div class="main-title">
+            <h1>VAWC</h1>
+        </div>
+        <div class="subtitle">Functionality Audit System</div>
+        <div class="subtitle-location">Municipality of Baggao, Cagayan</div>
+    </div>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-header">
+            <h1>🔐 Assessor Login</h1>
+            <p>Enter your PIN to continue</p>
+        </div>
+
+        <form class="login-form" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>Enter 4-Digit PIN</label>
+                <div class="pin-boxes">
+                    <input
+                        type="text"
+                        class="pin-box"
+                        id="pin1"
+                        maxlength="1"
+                        inputmode="numeric"
+                        autocomplete="off"
+                        required
+                    >
+                    <input
+                        type="text"
+                        class="pin-box"
+                        id="pin2"
+                        maxlength="1"
+                        inputmode="numeric"
+                        autocomplete="off"
+                        required
+                    >
+                    <input
+                        type="text"
+                        class="pin-box"
+                        id="pin3"
+                        maxlength="1"
+                        inputmode="numeric"
+                        autocomplete="off"
+                        required
+                    >
+                    <input
+                        type="text"
+                        class="pin-box"
+                        id="pin4"
+                        maxlength="1"
+                        inputmode="numeric"
+                        autocomplete="off"
+                        required
+                    >
+                </div>
+            </div>
+
+            <button type="submit" class="login-btn" id="loginBtn">
+                Verify
+            </button>
+
+            <div class="error-message" id="errorMessage">
+                ❌ Invalid PIN. Please try again.
+            </div>
+
+            <div class="success-message" id="successMessage">
+                ✅ Login successful! Redirecting...
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <div class="loading-text">Logging in...</div>
+            </div>
+        </form>
+
+        <div class="footer-text">
+            <strong>VAW Desk Assessment 2025</strong><br>
+            Municipality of Baggao, Cagayan
+        </div>
+
+        <div class="rater-count">
+            9 Authorized Assessors
+        </div>
+
+        <div class="developer-badge">
+            <div class="badge-chip">
+                <div class="badge-icon">💻</div>
+                <span>Developed by Richmond Rosete</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // RATER DATABASE (9 Raters)
+        // ============================================
+        const raters = [
+            { pin: "1001", name: "PNP BAGGAO", position: "ASSESSOR 1" },
+            { pin: "1002", name: "MLGOO", position: "ASSESSOR 2" },
+            { pin: "1003", name: "MSWDO1", position: "ASSESSOR 3" },
+            { pin: "1004", name: "MSDWDO2", position: "ASSESSOR 4" },
+            { pin: "1005", name: "WOMEN'S ORG", position: "ASSESSOR 5" },
+            { pin: "1006", name: "SB REPRESENTATIVE", position: "ASSESSOR 6" },
+            { pin: "1007", name: "CHAIRMAN (PS)", position: "ASSESSOR 7" },
+            { pin: "1008", name: "MHO", position: "ASSESSOR 8" },
+            { pin: "1009", name: "GAD FOCAL PERSON", position: "ASSESSOR 9" }
+        ];
+
+        // ============================================
+        // PIN BOX AUTO-TAB FUNCTIONALITY
+        // ============================================
+        const pinBoxes = document.querySelectorAll('.pin-box');
+
+        pinBoxes.forEach((box, index) => {
+            // Auto-tab to next box on input
+            box.addEventListener('input', function(e) {
+                // Only allow numbers
+                this.value = this.value.replace(/[^0-9]/g, '');
+
+                if (this.value.length === 1 && index < pinBoxes.length - 1) {
+                    pinBoxes[index + 1].focus();
+                }
+            });
+
+            // Handle backspace to go to previous box
+            box.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && this.value === '' && index > 0) {
+                    pinBoxes[index - 1].focus();
+                }
+            });
+
+            // Only allow numeric input
+            box.addEventListener('keypress', function(e) {
+                if (e.key < '0' || e.key > '9') {
+                    e.preventDefault();
+                }
+            });
+
+            // Select all on focus for easy overwrite
+            box.addEventListener('focus', function() {
+                this.select();
+            });
+        });
+
+        // ============================================
+        // AUTO-FOCUS ON FIRST PIN BOX
+        // ============================================
+        setTimeout(() => {
+            document.getElementById('pin1').focus();
+        }, 4200); // Focus after animation completes
+
+        // ============================================
+        // HANDLE LOGIN
+        // ============================================
+        function handleLogin(event) {
+            event.preventDefault();
+
+            // Collect PIN from all 4 boxes
+            const pin =
+                document.getElementById('pin1').value +
+                document.getElementById('pin2').value +
+                document.getElementById('pin3').value +
+                document.getElementById('pin4').value;
+
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            const loading = document.getElementById('loading');
+            const loginBtn = document.getElementById('loginBtn');
+
+            // Hide previous messages
+            errorMessage.classList.remove('show');
+            successMessage.classList.remove('show');
+
+            // Validate PIN length
+            if (pin.length !== 4) {
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            // Validate PIN
+            const rater = raters.find(r => r.pin === pin);
+
+            if (!rater) {
+                // Invalid PIN
+                errorMessage.classList.add('show');
+
+                // Clear all boxes
+                pinBoxes.forEach(box => {
+                    box.value = '';
+                    box.style.animation = 'none';
+                    setTimeout(() => {
+                        box.style.animation = 'shake 0.5s ease';
+                    }, 10);
+                });
+
+                document.getElementById('pin1').focus();
+                return;
+            }
+
+            // Valid PIN - Show loading
+            loading.classList.add('show');
+            loginBtn.disabled = true;
+            pinBoxes.forEach(box => box.disabled = true);
+
+            // Save login session
+            const loginSession = {
+                pin: rater.pin,
+                name: rater.name,
+                position: rater.position,
+                loginTime: new Date().toISOString(),
+                isAuthenticated: true
+            };
+
+            localStorage.setItem('vaw_login_session', JSON.stringify(loginSession));
+
+            // Show success message
+            setTimeout(() => {
+                loading.classList.remove('show');
+                successMessage.classList.add('show');
+                successMessage.textContent = `✅ Welcome, ${rater.name}!`;
+
+                // Redirect to assessment
+                setTimeout(() => {
+                    window.location.href = 'vaw_assessment_app.html';
+                }, 1500);
+            }, 1000);
+        }
+
+        // ============================================
+        // CHECK IF ALREADY LOGGED IN
+        // ============================================
+        window.addEventListener('load', function() {
+            const session = localStorage.getItem('vaw_login_session');
+            if (session) {
+                try {
+                    const loginData = JSON.parse(session);
+                    if (loginData.isAuthenticated) {
+                        // Already logged in, redirect
+                        setTimeout(() => {
+                            window.location.href = 'vaw_assessment_app.html';
+                        }, 4200); // After animation
+                    }
+                } catch (error) {
+                    console.error('Session error:', error);
+                }
+            }
+        });
+
+        // ============================================
+        // CONSOLE INFO
+        // ============================================
+        console.log('%cVAW Assessment System', 'color: #8B5CF6; font-size: 20px; font-weight: bold;');
+        console.log('%c9 Authorized Raters', 'color: #7C3AED; font-size: 14px;');
+        console.log('Developed for Municipality of Baggao - 2025');
+    </script>
+</body>
+</html>

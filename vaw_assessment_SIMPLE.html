@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAW Assessment - SIMPLE VERSION</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+        }
+        .banner {
+            background: #28A745;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        h1 { color: #0066CC; margin-bottom: 20px; }
+        h2 { color: #333; margin: 20px 0 10px; }
+        .form-group { margin-bottom: 20px; }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-primary {
+            background: #0066CC;
+            color: white;
+        }
+        .btn-primary:hover { background: #0052A3; }
+        .btn-success {
+            background: #28A745;
+            color: white;
+        }
+        .btn-success:hover { background: #218838; }
+        .radio-group {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .radio-option:hover {
+            border-color: #0066CC;
+            background: #f0f8ff;
+        }
+        .radio-option input {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        .score-display {
+            background: linear-gradient(135deg, #28A745 0%, #20C997 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .score-display .big-score {
+            font-size: 48px;
+            font-weight: bold;
+        }
+        .hidden { display: none; }
+        .progress {
+            background: #e0e0e0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .progress-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0066CC;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="banner">
+            ✅ SIMPLIFIED - No Complex State Management
+        </div>
+
+        <h1>VAW Desk Assessment</h1>
+
+        <!-- Dashboard -->
+        <div id="dashboard">
+            <div class="progress">
+                <div class="progress-text" id="progressText">0/48 Barangays Assessed</div>
+            </div>
+
+            <div class="form-group">
+                <label>Select Barangay to Assess:</label>
+                <select id="barangaySelect">
+                    <option value="">-- Choose Barangay --</option>
+                    <option value="Adaoag">Adaoag</option>
+                    <option value="Alba">Alba</option>
+                    <option value="Annayatan">Annayatan</option>
+                    <option value="Asassi">Asassi</option>
+                    <!-- Add all 48 here -->
+                </select>
+            </div>
+
+            <button class="btn btn-primary" onclick="startNew()" id="startBtn">
+                Start Assessment →
+            </button>
+
+            <div id="completedList" style="margin-top: 20px;"></div>
+        </div>
+
+        <!-- Assessment Form -->
+        <div id="assessmentForm" class="hidden">
+            <h2 id="barangayTitle">Assessment for: <span id="currentBarangay"></span></h2>
+
+            <div class="form-group">
+                <label>Date:</label>
+                <input type="date" id="assessmentDate">
+            </div>
+
+            <!-- Simple Question -->
+            <div class="form-group">
+                <label>1. The Barangay VAW Desk is established through: (5 points)</label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="q1" value="5" id="q1_yes">
+                        <label for="q1_yes">Barangay Ordinance (5 points)</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="q1" value="0" id="q1_no">
+                        <label for="q1_no">None (0 points)</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="score-display">
+                <div>Current Score</div>
+                <div class="big-score" id="currentScore">0</div>
+                <div>out of 5 points</div>
+            </div>
+
+            <button class="btn btn-success" onclick="saveAssessment()">
+                💾 Save Assessment
+            </button>
+
+            <button class="btn btn-primary" onclick="backToDashboard()">
+                ← Back to Dashboard
+            </button>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>
+        // Initialize EmailJS
+        (function() {
+            emailjs.init({
+                publicKey: "zquhILJk68y45UqRw"
+            });
+        })();
+
+        // Simple storage
+        let assessments = JSON.parse(localStorage.getItem('vaw_simple') || '{}');
+        let currentBrgy = '';
+
+        // Update progress on load
+        updateProgress();
+
+        // Listen for score changes
+        document.addEventListener('change', function(e) {
+            if (e.target.name === 'q1') {
+                calculateScore();
+            }
+        });
+
+        function updateProgress() {
+            const count = Object.keys(assessments).length;
+            document.getElementById('progressText').textContent = count + '/48 Barangays Assessed';
+
+            // Show completed list
+            const list = document.getElementById('completedList');
+            list.innerHTML = '<h3>Completed:</h3>';
+            Object.keys(assessments).forEach(brgy => {
+                const item = document.createElement('div');
+                item.style.cssText = 'padding: 10px; background: #e8f5e9; border-radius: 5px; margin: 5px 0;';
+                item.textContent = `✓ ${brgy} - Score: ${assessments[brgy].score}/5`;
+                list.appendChild(item);
+            });
+        }
+
+        function startNew() {
+            const brgy = document.getElementById('barangaySelect').value;
+            if (!brgy) {
+                alert('Please select a barangay first!');
+                return;
+            }
+
+            currentBrgy = brgy;
+
+            // RESET FORM COMPLETELY
+            document.querySelectorAll('input[name="q1"]').forEach(r => r.checked = false);
+            document.getElementById('assessmentDate').value = new Date().toISOString().split('T')[0];
+
+            // Show form
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('assessmentForm').classList.remove('hidden');
+            document.getElementById('currentBarangay').textContent = brgy;
+
+            // Load existing data if available
+            if (assessments[brgy]) {
+                document.getElementById('q1_yes').checked = assessments[brgy].score === 5;
+                document.getElementById('q1_no').checked = assessments[brgy].score === 0;
+            }
+
+            calculateScore();
+        }
+
+        function calculateScore() {
+            const selected = document.querySelector('input[name="q1"]:checked');
+            const score = selected ? parseInt(selected.value) : 0;
+            document.getElementById('currentScore').textContent = score;
+        }
+
+        function saveAssessment() {
+            const selected = document.querySelector('input[name="q1"]:checked');
+            if (!selected) {
+                alert('Please answer the question first!');
+                return;
+            }
+
+            const score = parseInt(selected.value);
+
+            assessments[currentBrgy] = {
+                barangay: currentBrgy,
+                date: document.getElementById('assessmentDate').value,
+                score: score,
+                status: 'completed'
+            };
+
+            localStorage.setItem('vaw_simple', JSON.stringify(assessments));
+
+            alert(`✅ Assessment saved!\n\n${currentBrgy}: ${score}/5 points`);
+
+            backToDashboard();
+        }
+
+        function backToDashboard() {
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('assessmentForm').classList.add('hidden');
+            updateProgress();
+        }
+    </script>
+</body>
+</html>
