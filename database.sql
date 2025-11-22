@@ -119,4 +119,5 @@ INSERT INTO raters (name, email, pin, position) VALUES
 ('SB REPRESENTATIVE', 'sb.rep@baggao.gov.ph', '1006', 'ASSESSOR 6'),
 ('CHAIRMAN (PS)', 'chairman.ps@baggao.gov.ph', '1007', 'ASSESSOR 7'),
 ('MHO', 'mho@baggao.gov.ph', '1008', 'ASSESSOR 8'),
-('GAD FOCAL PERSON', 'gad.focal@baggao.gov.ph', '1009', 'ASSESSOR 9');
+('GAD FOCAL PERSON', 'gad.focal@baggao.gov.ph', '1009', 'ASSESSOR 9'),
+('ADMINISTRATOR', 'admin@baggao.gov.ph', '3030', 'SYSTEM ADMINISTRATOR');

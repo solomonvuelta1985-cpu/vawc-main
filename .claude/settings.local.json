@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(\"c:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE vaw_consolidator; DELETE FROM barangays;\")"
+      "Bash(\"c:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE vaw_consolidator; DELETE FROM barangays;\")",
+      "Bash(\"c:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE vaw_consolidator; SOURCE c:/xampp/htdocs/vawc/admin_setup.sql;\")"
     ],
     "deny": [],
     "ask": []

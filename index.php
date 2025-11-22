@@ -16,21 +16,149 @@ require_once 'config.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo APP_NAME; ?> - <?php echo APP_MUNICIPALITY; ?></title>
 
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
     <!-- External CSS -->
     <link rel="stylesheet" href="style.css">
 
     <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <style>
+        /* Navbar Styles */
+        .custom-navbar {
+            background-color: #fff;
+            border-bottom: 1px solid #dee2e6;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            padding: 0.75rem 1.5rem;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: #1a73e8 !important;
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+        }
+
+        .navbar-brand i {
+            font-size: clamp(1.25rem, 3vw, 1.5rem);
+        }
+
+        .avatar-circle {
+            width: clamp(35px, 8vw, 40px);
+            height: clamp(35px, 8vw, 40px);
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .avatar-circle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+        }
+
+        .dropdown-toggle::after {
+            display: none;
+        }
+
+        .dropdown-menu {
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 1px solid #dee2e6;
+            padding: 0.5rem;
+        }
+
+        .dropdown-item {
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            font-size: clamp(0.875rem, 2vw, 0.9375rem);
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown-divider {
+            margin: 0.5rem 0;
+        }
+
+        .user-info-dropdown {
+            padding: 0.75rem 1rem;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-info-dropdown .user-name {
+            font-weight: 600;
+            color: #212529;
+            font-size: clamp(0.875rem, 2vw, 0.9375rem);
+            margin-bottom: 0.25rem;
+        }
+
+        .user-info-dropdown .user-role {
+            font-size: clamp(0.75rem, 1.8vw, 0.8125rem);
+            color: #6c757d;
+        }
+
+        /* Adjust container to account for fixed navbar */
+        body {
+            padding-top: 60px;
+        }
+
+        .custom-navbar.fixed-top {
+            z-index: 1030;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1><?php echo APP_NAME; ?></h1>
-            <p>Municipality of <?php echo APP_MUNICIPALITY; ?>, <?php echo APP_PROVINCE; ?></p>
-            <p>Logged in as: <strong><?php echo htmlspecialchars($_SESSION['rater_name']); ?></strong></p>
-            <a href="logout.php" class="logout-btn" onclick="return confirm('Are you sure you want to logout?');">Logout</a>
+    <!-- Top Navbar -->
+    <nav class="navbar custom-navbar fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-clipboard-data-fill me-2"></i>
+                <?php echo APP_NAME; ?>
+            </a>
+            <div class="d-flex align-items-center">
+                <div class="dropdown">
+                    <button class="btn p-0 dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="avatar-circle" title="<?php echo htmlspecialchars($_SESSION['rater_name']); ?>">
+                            <?php
+                                $name = $_SESSION['rater_name'];
+                                echo strtoupper(substr($name, 0, 1));
+                            ?>
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li>
+                            <div class="user-info-dropdown">
+                                <div class="user-name"><?php echo htmlspecialchars($_SESSION['rater_name']); ?></div>
+                                <div class="user-role">Assessor</div>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="#" onclick="confirmLogout(); return false;">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
+    </nav>
 
+    <div class="container">
         <!-- Progress Bar -->
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill" style="width: 0%"></div>
@@ -42,9 +170,8 @@ require_once 'config.php';
         <div class="content">
             <!-- Navigation Tabs -->
             <div class="nav-tabs">
-                <button class="nav-tab active" onclick="switchTab('addTab')">Add Assessment</button>
-                <button class="nav-tab" onclick="switchTab('viewTab')">View Assessments</button>
-                <button class="nav-tab" onclick="switchTab('reportsTab')">Reports</button>
+                <button class="nav-tab active" onclick="switchTab('addTab')"><i class="bi bi-plus-circle me-1"></i> Add Assessment</button>
+                <button class="nav-tab" onclick="switchTab('viewTab')"><i class="bi bi-list-ul me-1"></i> View Assessments</button>
             </div>
 
             <!-- Add Assessment Tab -->
@@ -592,26 +719,36 @@ require_once 'config.php';
                 </div>
             </div>
 
-            <!-- Reports Tab -->
-            <div id="reportsTab" class="tab-content">
-                <div class="card">
-                    <h2 class="card-title">Assessment Reports & Statistics</h2>
-                    <div id="reportsContent">
-                        <div class="loading">
-                            <div class="loading-spinner"></div>
-                            Loading reports...
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- External JS -->
     <script src="script.js"></script>
+
+    <script>
+        // Logout confirmation function
+        function confirmLogout() {
+            Swal.fire({
+                title: 'Logout',
+                text: 'Are you sure you want to logout?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, logout',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'logout.php';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
