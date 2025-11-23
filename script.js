@@ -176,7 +176,7 @@ function toggleCheckbox(id) {
 function calculateScores() {
     let section1 = 0, section2 = 0, section3 = 0, section4 = 0;
 
-    // SECTION 1: Establishment (20% base, convert to 25)
+    // SECTION 1: Establishment (20 points max - percentages are % of 100 total)
     // 1.a. Establishment through (5%)
     const q1a = document.querySelector('input[name="q1a"]:checked');
     if (q1a && q1a.value !== 'none') section1 += 5;
@@ -192,10 +192,7 @@ function calculateScores() {
     // 1.d. Interview room (5%)
     if (document.getElementById('q1d_room')?.checked) section1 += 5;
 
-    // Convert 20 to 25 scale
-    section1 = (section1 / 20) * 25;
-
-    // SECTION 2: Resources (20% base, convert to 25)
+    // SECTION 2: Resources (20 points max - percentages are % of 100 total)
     // 2.a. Furniture (4% total)
     if (document.getElementById('q2a_table')?.checked) section2 += 1;
     if (document.getElementById('q2a_cabinet')?.checked) section2 += 1;
@@ -224,10 +221,7 @@ function calculateScores() {
     if (document.getElementById('q2d_bpo_flow')?.checked) section2 += 0.5;
     if (document.getElementById('q2d_vaw_flow')?.checked) section2 += 0.5;
 
-    // Convert 20 to 25 scale
-    section2 = (section2 / 20) * 25;
-
-    // SECTION 3: Policies, Plans, and Budget (20% base, convert to 25)
+    // SECTION 3: Policies, Plans, and Budget (20 points max - percentages are % of 100 total)
     // 3.a. AIP (5%)
     if (document.getElementById('q3a_aip')?.checked) section3 += 5;
 
@@ -240,10 +234,7 @@ function calculateScores() {
     // 3.d. BDP (5%)
     if (document.getElementById('q3d_bdp')?.checked) section3 += 5;
 
-    // Convert 20 to 25 scale
-    section3 = (section3 / 20) * 25;
-
-    // SECTION 4: Accomplishments (40% base, convert to 25)
+    // SECTION 4: Accomplishments (40 points max - percentages are % of 100 total)
     // 4.a. Annual report (10%)
     if (document.getElementById('q4a_annual')?.checked) section4 += 10;
 
@@ -268,20 +259,17 @@ function calculateScores() {
         else if (val === '1') section4 += 5;
     }
 
-    // Convert 40 to 25 scale
-    section4 = (section4 / 40) * 25;
-
     // Update hidden inputs
     document.getElementById('section1_score').value = section1.toFixed(2);
     document.getElementById('section2_score').value = section2.toFixed(2);
     document.getElementById('section3_score').value = section3.toFixed(2);
     document.getElementById('section4_score').value = section4.toFixed(2);
 
-    // Update displays
-    document.getElementById('score1_display').textContent = section1.toFixed(1) + '/25';
-    document.getElementById('score2_display').textContent = section2.toFixed(1) + '/25';
-    document.getElementById('score3_display').textContent = section3.toFixed(1) + '/25';
-    document.getElementById('score4_display').textContent = section4.toFixed(1) + '/25';
+    // Update displays - show actual points (not scaled)
+    document.getElementById('score1_display').textContent = section1.toFixed(1) + '/20';
+    document.getElementById('score2_display').textContent = section2.toFixed(1) + '/20';
+    document.getElementById('score3_display').textContent = section3.toFixed(1) + '/20';
+    document.getElementById('score4_display').textContent = section4.toFixed(1) + '/40';
 }
 
 // Update Summary
@@ -301,10 +289,10 @@ function updateSummary() {
     const section3 = parseFloat(document.getElementById('section3_score').value) || 0;
     const section4 = parseFloat(document.getElementById('section4_score').value) || 0;
 
-    document.getElementById('summary_score1').textContent = section1.toFixed(1) + '/25';
-    document.getElementById('summary_score2').textContent = section2.toFixed(1) + '/25';
-    document.getElementById('summary_score3').textContent = section3.toFixed(1) + '/25';
-    document.getElementById('summary_score4').textContent = section4.toFixed(1) + '/25';
+    document.getElementById('summary_score1').textContent = section1.toFixed(1) + '/20';
+    document.getElementById('summary_score2').textContent = section2.toFixed(1) + '/20';
+    document.getElementById('summary_score3').textContent = section3.toFixed(1) + '/20';
+    document.getElementById('summary_score4').textContent = section4.toFixed(1) + '/40';
 
     const totalScore = section1 + section2 + section3 + section4;
     document.getElementById('total_score_display').textContent = totalScore.toFixed(1) + '/100';
@@ -329,12 +317,12 @@ function submitAssessment() {
     const section3 = parseFloat(formData.get('section3_score'));
     const section4 = parseFloat(formData.get('section4_score'));
 
-    if (section1 < 0 || section1 > 25 || section2 < 0 || section2 > 25 ||
-        section3 < 0 || section3 > 25 || section4 < 0 || section4 > 25) {
+    if (section1 < 0 || section1 > 20 || section2 < 0 || section2 > 20 ||
+        section3 < 0 || section3 > 20 || section4 < 0 || section4 > 40) {
         Swal.fire({
             icon: 'error',
             title: 'Invalid Score',
-            text: 'Each section score must be between 0 and 25',
+            text: 'Section scores must be valid: Sections 1-3 (0-20), Section 4 (0-40)',
             confirmButtonColor: '#0066CC'
         });
         return;
@@ -463,22 +451,22 @@ function editAssessment(id) {
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Section 1 Score (0-25)</label>
-                                <input type="number" id="edit_section1" class="swal2-input" value="${assessment.section1_score}" min="0" max="25" step="0.1" style="width: 90%;">
+                                <label>Section 1 Score (0-20)</label>
+                                <input type="number" id="edit_section1" class="swal2-input" value="${assessment.section1_score}" min="0" max="20" step="0.1" style="width: 90%;">
                             </div>
                             <div class="form-group">
-                                <label>Section 2 Score (0-25)</label>
-                                <input type="number" id="edit_section2" class="swal2-input" value="${assessment.section2_score}" min="0" max="25" step="0.1" style="width: 90%;">
+                                <label>Section 2 Score (0-20)</label>
+                                <input type="number" id="edit_section2" class="swal2-input" value="${assessment.section2_score}" min="0" max="20" step="0.1" style="width: 90%;">
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Section 3 Score (0-25)</label>
-                                <input type="number" id="edit_section3" class="swal2-input" value="${assessment.section3_score}" min="0" max="25" step="0.1" style="width: 90%;">
+                                <label>Section 3 Score (0-20)</label>
+                                <input type="number" id="edit_section3" class="swal2-input" value="${assessment.section3_score}" min="0" max="20" step="0.1" style="width: 90%;">
                             </div>
                             <div class="form-group">
-                                <label>Section 4 Score (0-25)</label>
-                                <input type="number" id="edit_section4" class="swal2-input" value="${assessment.section4_score}" min="0" max="25" step="0.1" style="width: 90%;">
+                                <label>Section 4 Score (0-40)</label>
+                                <input type="number" id="edit_section4" class="swal2-input" value="${assessment.section4_score}" min="0" max="40" step="0.1" style="width: 90%;">
                             </div>
                         </div>
                         <div class="form-group">
@@ -506,9 +494,9 @@ function editAssessment(id) {
                     const section3 = parseFloat(document.getElementById('edit_section3').value);
                     const section4 = parseFloat(document.getElementById('edit_section4').value);
 
-                    if (section1 < 0 || section1 > 25 || section2 < 0 || section2 > 25 ||
-                        section3 < 0 || section3 > 25 || section4 < 0 || section4 > 25) {
-                        Swal.showValidationMessage('Each section score must be between 0 and 25');
+                    if (section1 < 0 || section1 > 20 || section2 < 0 || section2 > 20 ||
+                        section3 < 0 || section3 > 20 || section4 < 0 || section4 > 40) {
+                        Swal.showValidationMessage('Section scores must be valid: Sections 1-3 (0-20), Section 4 (0-40)');
                         return false;
                     }
 

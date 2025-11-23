@@ -528,7 +528,7 @@ require_once 'config.php';
                         <div class="barangay-info">
                             <strong>Barangay:</strong> <span id="barangay_name_1"></span><br>
                             <strong>Date:</strong> <span id="assessment_date_1"></span><br>
-                            <strong>Score:</strong> <span id="score1_display" style="font-size: 20px; color: #1e8e3e;">0/25</span>
+                            <strong>Score:</strong> <span id="score1_display" style="font-size: 20px; color: #1e8e3e;">0/20</span>
                         </div>
 
                         <!-- Hidden input to store calculated score -->
@@ -618,7 +618,7 @@ require_once 'config.php';
                         <div class="barangay-info">
                             <strong>Barangay:</strong> <span id="barangay_name_2"></span><br>
                             <strong>Date:</strong> <span id="assessment_date_2"></span><br>
-                            <strong>Score:</strong> <span id="score2_display" style="font-size: 20px; color: #1e8e3e;">0/25</span>
+                            <strong>Score:</strong> <span id="score2_display" style="font-size: 20px; color: #1e8e3e;">0/20</span>
                         </div>
 
                         <!-- Hidden input to store calculated score -->
@@ -766,7 +766,7 @@ require_once 'config.php';
                         <div class="barangay-info">
                             <strong>Barangay:</strong> <span id="barangay_name_3"></span><br>
                             <strong>Date:</strong> <span id="assessment_date_3"></span><br>
-                            <strong>Score:</strong> <span id="score3_display" style="font-size: 20px; color: #1e8e3e;">0/25</span>
+                            <strong>Score:</strong> <span id="score3_display" style="font-size: 20px; color: #1e8e3e;">0/20</span>
                         </div>
 
                         <!-- Hidden input to store calculated score -->
@@ -831,7 +831,7 @@ require_once 'config.php';
                         <div class="barangay-info">
                             <strong>Barangay:</strong> <span id="barangay_name_4"></span><br>
                             <strong>Date:</strong> <span id="assessment_date_4"></span><br>
-                            <strong>Score:</strong> <span id="score4_display" style="font-size: 20px; color: #1e8e3e;">0/25</span>
+                            <strong>Score:</strong> <span id="score4_display" style="font-size: 20px; color: #1e8e3e;">0/40</span>
                         </div>
 
                         <!-- Hidden input to store calculated score -->
@@ -943,19 +943,19 @@ require_once 'config.php';
                             <h3>Section Scores</h3>
                             <div class="summary-item">
                                 <span>Section 1: Establishment</span>
-                                <strong id="summary_score1">0/25</strong>
+                                <strong id="summary_score1">0/20</strong>
                             </div>
                             <div class="summary-item">
                                 <span>Section 2: Resources</span>
-                                <strong id="summary_score2">0/25</strong>
+                                <strong id="summary_score2">0/20</strong>
                             </div>
                             <div class="summary-item">
                                 <span>Section 3: Policies & Plans</span>
-                                <strong id="summary_score3">0/25</strong>
+                                <strong id="summary_score3">0/20</strong>
                             </div>
                             <div class="summary-item">
                                 <span>Section 4: Accomplishments</span>
-                                <strong id="summary_score4">0/25</strong>
+                                <strong id="summary_score4">0/40</strong>
                             </div>
                         </div>
 

@@ -155,7 +155,7 @@ function renderSectionScoresChart(scores) {
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 25,
+                    max: 40,
                     ticks: {
                         stepSize: 5
                     }
@@ -168,7 +168,10 @@ function renderSectionScoresChart(scores) {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return 'Average: ' + context.parsed.y.toFixed(2) + ' / 25';
+                            const sectionIndex = context.dataIndex;
+                            // Sections 1-3 are out of 20, Section 4 is out of 40
+                            const maxScore = sectionIndex <= 2 ? 20 : 40;
+                            return 'Average: ' + context.parsed.y.toFixed(2) + ' / ' + maxScore;
                         }
                     }
                 }
