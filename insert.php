@@ -33,11 +33,11 @@ if (empty($barangay_id) || empty($assessment_date)) {
 }
 
 // Validate scores
-if ($section1_score < 0 || $section1_score > 25 ||
-    $section2_score < 0 || $section2_score > 25 ||
-    $section3_score < 0 || $section3_score > 25 ||
-    $section4_score < 0 || $section4_score > 25) {
-    send_json_response(false, 'Each section score must be between 0 and 25');
+if ($section1_score < 0 || $section1_score > 20 ||
+    $section2_score < 0 || $section2_score > 20 ||
+    $section3_score < 0 || $section3_score > 20 ||
+    $section4_score < 0 || $section4_score > 40) {
+    send_json_response(false, 'Section scores must be valid: Sections 1-3 (0-20), Section 4 (0-40)');
 }
 
 // Calculate total score
