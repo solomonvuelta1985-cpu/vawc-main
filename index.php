@@ -262,6 +262,165 @@ require_once 'config.php';
                 grid-column: 1 / -1;
             }
         }
+
+        /* Mobile responsiveness improvements */
+        @media (max-width: 576px) {
+            body {
+                padding-top: 70px !important; /* Increased padding for mobile navbar */
+                padding-left: 8px !important;
+                padding-right: 8px !important;
+            }
+
+            .custom-navbar {
+                padding: 0.75rem 1rem !important; /* Reduced horizontal padding on mobile */
+            }
+
+            .navbar-brand {
+                font-size: 0.85rem !important;
+                line-height: 1.3;
+            }
+
+            .navbar-brand i {
+                font-size: 1.1rem !important;
+                margin-right: 0.25rem !important;
+            }
+
+            .avatar-circle {
+                width: 35px !important;
+                height: 35px !important;
+                font-size: 1rem !important;
+            }
+
+            .container {
+                max-width: 100% !important;
+                margin: 0 !important;
+                border-radius: 8px !important;
+            }
+
+            .content {
+                padding: 12px !important;
+            }
+
+            .progress-text-container {
+                padding: 10px 8px !important;
+            }
+
+            .progress-badge {
+                padding: 6px 16px !important;
+                font-size: 11px !important;
+            }
+
+            .nav-tabs {
+                gap: 4px !important;
+                margin-bottom: 16px !important;
+                padding-bottom: 0 !important;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+                white-space: nowrap;
+                flex-wrap: nowrap !important;
+                border-bottom: 2px solid #e8eaed;
+            }
+
+            .nav-tab {
+                padding: 10px 14px !important;
+                font-size: 13px !important;
+                flex-shrink: 0;
+            }
+
+            .nav-tab i {
+                font-size: 12px !important;
+            }
+
+            .card {
+                padding: 14px !important;
+                margin-bottom: 14px !important;
+            }
+
+            .card-title {
+                font-size: 16px !important;
+                margin-bottom: 12px !important;
+                padding-bottom: 8px !important;
+            }
+
+            .form-group {
+                margin-bottom: 14px !important;
+            }
+
+            .form-group label {
+                font-size: 12px !important;
+                margin-bottom: 6px !important;
+            }
+
+            .alert {
+                padding: 10px !important;
+                font-size: 12px !important;
+                margin-bottom: 14px !important;
+            }
+
+            .alert strong {
+                font-size: 13px !important;
+            }
+
+            /* Ensure dropdown is accessible on mobile */
+            .dropdown-menu {
+                position: absolute !important;
+                right: 0 !important;
+                left: auto !important;
+                margin-top: 0.5rem;
+                min-width: 180px;
+            }
+
+            .network-toast {
+                top: 75px !important;
+                right: 10px !important;
+                left: 10px !important;
+                min-width: auto !important;
+                max-width: none !important;
+                padding: 0.75rem 1rem !important;
+                font-size: 0.8rem !important;
+            }
+
+            .network-toast .toast-icon {
+                font-size: 1.1rem !important;
+            }
+        }
+
+        /* Extra small devices (phones in portrait) */
+        @media (max-width: 400px) {
+            body {
+                padding-top: 75px !important;
+            }
+
+            .navbar-brand {
+                font-size: 0.75rem !important;
+            }
+
+            .navbar-brand i {
+                display: none; /* Hide icon to save space */
+            }
+
+            .nav-tab {
+                padding: 8px 12px !important;
+                font-size: 12px !important;
+            }
+
+            .progress-badge {
+                padding: 5px 12px !important;
+                font-size: 10px !important;
+            }
+        }
+
+        /* Landscape phones */
+        @media (max-width: 767px) and (orientation: landscape) {
+            body {
+                padding-top: 65px !important;
+            }
+
+            .custom-navbar {
+                padding: 0.5rem 1rem !important;
+            }
+        }
     </style>
 </head>
 <body>

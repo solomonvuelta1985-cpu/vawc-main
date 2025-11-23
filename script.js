@@ -2,6 +2,15 @@
 let currentStep = 0;
 const totalSteps = 5;
 
+// Helper function to get today's date in YYYY-MM-DD format (local timezone)
+function getTodayDateString() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 // Tab Navigation
 function switchTab(tabName, event) {
     // Hide all tabs
@@ -33,7 +42,7 @@ function switchTab(tabName, event) {
         // Set date to today
         const dateInput = document.getElementById('assessment_date');
         if (dateInput && !dateInput.value) {
-            dateInput.valueAsDate = new Date();
+            dateInput.value = getTodayDateString();
         }
         // Refresh assessment list to update disabled barangays
         if (typeof fetchUserAssessments === 'function') {
@@ -362,7 +371,7 @@ function submitAssessment() {
                     updateSectionScore(i);
                 }
                 // Set date to today automatically
-                document.getElementById('assessment_date').valueAsDate = new Date();
+                document.getElementById('assessment_date').value = getTodayDateString();
                 // Go back to step 0
                 goToStep(0);
                 // Reload assessments and refresh barangay dropdown
@@ -401,7 +410,7 @@ function loadAssessments() {
     .then(data => {
         if (data.success) {
             if (data.data.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="11" class="empty-state"><div class="icon">📋</div><h3>No Assessments Yet</h3><p>Add your first assessment using the form above</p></td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="11" class="empty-state"><div class="icon">ðŸ“‹</div><h3>No Assessments Yet</h3><p>Add your first assessment using the form above</p></td></tr>';
             } else {
                 tableBody.innerHTML = '';
                 data.data.forEach(assessment => {
@@ -800,5 +809,5 @@ document.addEventListener('DOMContentLoaded', function() {
     loadAssessments();
 
     // Set default date to today
-    document.getElementById('assessment_date').valueAsDate = new Date();
+    document.getElementById('assessment_date').value = getTodayDateString();
 });
