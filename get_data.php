@@ -268,4 +268,3 @@ function getReports() {
 }
 
 $conn->close();
-?>

@@ -117,4 +117,3 @@ function shutdownHandler() {
 }
 
 register_shutdown_function('shutdownHandler');
-?>

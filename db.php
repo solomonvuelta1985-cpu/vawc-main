@@ -1,4 +1,8 @@
 <?php
+// Clean output buffer to prevent whitespace/BOM issues
+if (ob_get_level()) ob_end_clean();
+ob_start();
+
 // Include custom error logging
 require_once 'error_log.php';
 
@@ -29,12 +33,29 @@ function sanitize_input($data) {
 
 // Function to send JSON response
 function send_json_response($success, $message, $data = null) {
-    header('Content-Type: application/json');
-    echo json_encode([
+    // Clean any output that may have been generated
+    if (ob_get_level()) ob_end_clean();
+
+    // Prevent any caching
+    header('Cache-Control: no-cache, must-revalidate');
+    header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+    header('Content-Type: application/json; charset=utf-8');
+
+    $response = json_encode([
         'success' => $success,
         'message' => $message,
         'data' => $data
     ]);
+
+    // Log if JSON encoding failed
+    if ($response === false) {
+        error_log('JSON encoding failed: ' . json_last_error_msg());
+        $response = json_encode([
+            'success' => false,
+            'message' => 'Internal server error'
+        ]);
+    }
+
+    echo $response;
     exit;
 }
-?>

@@ -360,4 +360,3 @@ function getExportData() {
 }
 
 $conn->close();
-?>

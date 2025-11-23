@@ -1,0 +1,11 @@
+# Security: Block direct access to sensitive PHP files
+<FilesMatch "^(config|db|error_log)\.php$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Allow access to all other files
+<FilesMatch "\.php$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>
